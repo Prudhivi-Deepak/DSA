@@ -1,0 +1,139 @@
+#include <iostream>
+#include <array>
+
+using namespace std;
+
+int main() {
+    array<int, 5> arr = {1, 2, 3, 4, 5};
+
+    // at() - Access element at specific index with bounds checking
+    cout << "Element at index 2: " << arr.at(2) << endl;
+
+    // operator[] - Access element at specific index without bounds checking
+    cout << "Element at index 3: " << arr[3] << endl;
+
+    // front() - Access the first element
+    cout << "First element: " << arr.front() << endl;
+
+    // back() - Access the last element
+    cout << "Last element: " << arr.back() << endl;
+
+    // data() - Get a pointer to the underlying array
+    int* p = arr.data();
+    cout << "First element using data(): " << *p << endl;
+
+    // begin() and end() - Get iterators to the beginning and end of the array
+    cout << "Elements: ";
+    for(auto it = arr.begin(); it != arr.end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+
+    // rbegin() and rend() - Get reverse iterators to the beginning and end of the array
+    cout << "Elements in reverse: ";
+    for(auto it = arr.rbegin(); it != arr.rend(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+
+    // cbegin() and cend() - Get const iterators to the beginning and end of the array
+    cout << "Elements using cbegin() and cend(): ";
+    for(auto it = arr.cbegin(); it != arr.cend(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+
+    // crbegin() and crend() - Get const reverse iterators to the beginning and end of the array
+    cout << "Elements in reverse using crbegin() and crend(): ";
+    for(auto it = arr.crbegin(); it != arr.crend(); ++it) {
+        cout << *it << " ";
+    }
+    cout << endl;
+
+    // empty() - Check if the array is empty
+    cout << "Is array empty? " << (arr.empty() ? "Yes" : "No") << endl;
+
+    // fill() - Fill the array with a specified value
+    arr.fill(10);
+    cout << "Array after fill(): ";
+    for(auto& elem : arr) {
+        cout << elem << " ";
+    }
+    cout << endl;
+
+    // swap() - Swap the contents of two arrays
+    array<int, 5> arr2 = {6, 7, 8, 9, 10};
+    arr.swap(arr2);
+    cout << "Array after swap(): ";
+    for(auto& elem : arr) {
+        cout << elem << " ";
+    }
+    cout << endl;
+
+    // size() - Get the number of elements in the array
+    cout << "Size of array: " << arr.size() << endl;
+
+    // max_size() - Get the maximum number of elements the array can hold
+    cout << "Max size of array: " << arr.max_size() << endl;
+
+    // operator= - Copy the contents of one array to another
+    arr = arr2;
+    cout << "Array after operator=: ";
+    for(auto& elem : arr) {
+        cout << elem << " ";
+    }
+    cout << endl;
+
+    // operator== - Check if two arrays are equal
+    cout << "Are arrays equal? " << (arr == arr2 ? "Yes" : "No") << endl;
+
+    // operator!= - Check if two arrays are not equal
+    cout << "Are arrays not equal? " << (arr != arr2 ? "Yes" : "No") << endl;
+
+    // operator< - Check if one array is less than another
+    cout << "Is arr < arr2? " << (arr < arr2 ? "Yes" : "No") << endl;
+
+    // operator<= - Check if one array is less than or equal to another
+    cout << "Is arr <= arr2? " << (arr <= arr2 ? "Yes" : "No") << endl;
+
+    // operator> - Check if one array is greater than another
+    cout << "Is arr > arr2? " << (arr > arr2 ? "Yes" : "No") << endl;
+
+    // operator>= - Check if one array is greater than or equal to another
+    cout << "Is arr >= arr2? " << (arr >= arr2 ? "Yes" : "No") << endl;
+
+    ----------------------------------------------------------------
+
+    array<int, 5> arr = {1, 2, 3, 4, 5};
+    size_t current_size = arr.size();
+
+    // Function to delete an element at a specific index
+    auto delete_at_index = [&](size_t index) {
+        if (index >= current_size) {
+            cout << "Index out of bounds" << endl;
+            return;
+        }
+        for (size_t i = index; i < current_size - 1; ++i) {
+            arr[i] = arr[i + 1];
+        }
+        --current_size;
+    };
+
+    // Delete element at index 2
+    delete_at_index(2);
+    cout << "Array after deleting element at index 2: ";
+    for (size_t i = 0; i < current_size; ++i) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+
+    // Delete element at index 0
+    delete_at_index(0);
+    cout << "Array after deleting element at index 0: ";
+    for (size_t i = 0; i < current_size; ++i) {
+        cout << arr[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
+}

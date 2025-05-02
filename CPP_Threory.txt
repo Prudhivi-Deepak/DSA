@@ -1,0 +1,917 @@
+decltype
+    1. decltype is a keyword in C++ that is used to query the type of an expression.
+    2. It is used to determine the type of a variable or expression at compile time.
+    3. It can be used to declare variables, function return types, and template parameters.
+    4. It is useful for writing generic code that can work with different types without knowing them in advance.
+    5. It can be used to deduce the type of a variable or expression without explicitly specifying it.
+    6. It can be used to create type aliases and type traits.
+    7. It can be used to create type-safe containers and algorithms.
+    8. It can be used to create type-safe function pointers and function objects
+example :
+    1. decltype(x) : Returns the type of x.
+    2. decltype((x)) : Returns the type of x as a reference.
+    3. decltype(f(x)) : Returns the return type of function f when called with argument x.
+    4. decltype(auto) : Deduces the type of a variable or expression at compile time.
+    5. decltype(std::declval<T>()) : Returns the type of T when used in a template context.
+    6. decltype(std::declval<T>().member_function()) : Returns the return type of member function of T when called with no arguments.
+    7. decltype(std::declval<T>().member_variable) : Returns the type of member variable of T.
+    8. decltype(std::declval<T>().operator()) : Returns the return type of operator() of T when called with no arguments.
+    9. decltype(std::declval<T>().operator[](std::declval<U>())) : Returns the return type of operator[] of T when called with argument of type U.
+    10. decltype(std::declval<T>().operator->()) : Returns the return type of operator-> of T when called with no arguments.
+    11. decltype(std::declval<T>().operator new()) : Returns the return type of operator new of T when called with no arguments.
+    12. decltype(std::declval<T>().operator delete()) : Returns the return type of operator delete of T when called with no arguments.
+
+int x = 10
+decltype(x) y = 20; // y is of type int
+decltype((x)) z = 30; // z is of type int&
+decltype(f(x)) w = 40; // w is of type int
+decltype(auto) a = 50; // a is of type int
+
+Array - 
+    1. Array is a collection of elements of same data type.
+    2. Array is a fixed size data structure.
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+syntax :array<type, size> name; 
+        array<type, size> name = {value1, value2, value3, ...};
+        array<type, size> name{{value1, value2, value3, ...}};
+
+methods : 
+    at() get() operator[] : Returns the value at the given index.
+
+    front() : Returns the first element.
+    back() : Returns the last element.
+    data() : Returns a direct pointer to the memory array used internally by the vector to store its owned elements.
+
+    begin() : Returns an iterator pointing to the first element.
+    end() : Returns an iterator pointing to the theoretical element that follows the last element.
+    rbegin() : Returns a reverse iterator pointing to the last element.
+    rend() : Returns a reverse iterator pointing to the theoretical element that precedes the first element.
+    cbegin() : Returns a constant iterator pointing to the first element. (can't modify the elements)
+    cend() : Returns a constant iterator pointing to the last element. (can't modify the elements)
+    crbegin() : Returns a constant reverse iterator pointing to the last element. (can't modify the elements)
+    crend() : Returns a constant reverse iterator pointing to the theoretical element preceding the first element. (can't modify the elements)
+
+    empty() : Returns whether the container is empty.    
+    fill() : It assigns new value to the elements in the array.
+    swap() : It swaps the contents of two arrays of same type and size. | Swaps the contents of two arrays.
+    size() : Returns the number of elements in the array.
+    max_size() : Returns the maximum number of elements that the array can hold.    
+
+    operator= : Assigns values to array.
+    operator== : Compares two arrays.
+    operator!= : Compares two arrays.
+    operator< : Checks if an array is less than the other.
+    operator<= : Checks if an array is less than or equal to the other.
+    operator> : Checks if an array is greater than the other.
+    operator>= : Checks if an array is greater than or equal to the other.
+
+    In C++, arrays have a fixed size, so you cannot directly delete elements from an array. However, you can use the `std::vector` container from the Standard Template Library (STL) which provides dynamic array functionality, including the ability to delete elements.
+
+    Here are some methods to delete elements in a `std::vector`:
+
+    1. `erase()`: Removes a single element or a range of elements.
+        ```cpp
+        #include <vector>
+        #include <iostream>
+
+        int main() {
+            std::vector<int> vec = {1, 2, 3, 4, 5};
+
+            // Remove the element at index 2
+            vec.erase(vec.begin() + 2);
+
+            // Remove elements from index 1 to 3 (exclusive)
+            vec.erase(vec.begin() + 1, vec.begin() + 3);
+
+            // Print the vector
+            for (int num : vec) {
+                std::cout << num << " ";
+            }
+            std::cout << std::endl;
+
+            return 0;
+        }
+        ```
+
+    2. `pop_back()`: Removes the last element.
+        ```cpp
+        #include <vector>
+        #include <iostream>
+
+        int main() {
+            std::vector<int> vec = {1, 2, 3, 4, 5};
+
+            // Remove the last element
+            vec.pop_back();
+
+            // Print the vector
+            for (int num : vec) {
+                std::cout << num << " ";
+            }
+            std::cout << std::endl;
+
+            return 0;
+        }
+        ```
+
+    3. `clear()`: Removes all elements.
+        ```cpp
+        #include <vector>
+        #include <iostream>
+
+        int main() {
+            std::vector<int> vec = {1, 2, 3, 4, 5};
+
+            // Remove all elements
+            vec.clear();
+
+            // Print the vector
+            std::cout << "Size after clear: " << vec.size() << std::endl;
+
+            return 0;
+        }
+        ```
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+vector - 
+    1. Vector is a collection of elements of same data type.
+    2. Vector is a dynamic size data structure.
+    3. Vector is a sequence container that encapsulates dynamic size arrays.
+    4. It is a generic class that provides a dynamic array.
+    5. It provides dynamic array functionality that allows it to grow and shrink in size.
+    6. Vectors are sequence containers representing arrays that can change in size.
+    7. Just like arrays, vectors use contiguous storage locations for their elements, which means that their elements can also be accessed using offsets on regular pointers to its elements, and just as efficiently as in arrays.
+    8. But unlike arrays, their size can change dynamically, with their storage being handled automatically by the container.
+    9. Vectors are the same as dynamic arrays with the ability to resize itself automatically when an element is inserted or deleted, with their storage being handled automatically by the container.
+    10. Vector elements are placed in contiguous storage so that they can be accessed and traversed using iterators.
+    11. In vectors, data is inserted at the end. Inserting at the end takes differential time, as sometimes there may be a need of extending the array.
+    12. Removing the last element takes only constant time because no resizing happens.
+    13. Inserting and erasing at the beginning or in the middle is linear in time.
+    14. Vectors usually occupy more space than static arrays, because more memory is allocated to handle future growth.
+    15. Vectors are less secure than static arrays, as they are more prone to bugs and errors.
+    16. Vectors are used when the number of elements is unknown, or the number of elements may change.
+    17. Vectors are used when the number of elements is very large and the number of operations that are to be performed on the elements are very large.    
+
+syntax : vector<type> name;
+         vector<type> name = {value1, value2, value3, ...};
+         vector<type> name{{value1, value2, value3, ...}};
+
+methods :
+    at() get() operator[] : Returns the value at the given index.
+
+    front() : Returns the first element.
+    back() : Returns the last element.
+    data() : Returns a direct pointer to the memory array used internally by the vector to store its owned elements.
+
+    begin() : Returns an iterator pointing to the first element.
+    end() : Returns an iterator pointing to the theoretical element that follows the last element.
+    rbegin() : Returns a reverse iterator pointing to the last element.
+    rend() : Returns a reverse iterator pointing to the theoretical element that precedes the first element.
+    cbegin() : Returns a constant iterator pointing to the first element. (can't modify the elements)
+    cend() : Returns a constant iterator pointing to the last element. (can't modify the elements)
+    crbegin() : Returns a constant reverse iterator pointing to the last element. (can't modify the elements)
+    crend() : Returns a constant reverse iterator pointing to the theoretical element preceding the first element. (can't modify the elements)
+
+    empty() : Returns whether the container is empty.    
+    fill() : It assigns new value to the elements in the array.
+    swap() : It swaps the contents of two arrays of same type and size. | Swaps the contents of two arrays.
+    size() : Returns the number of elements in the array.
+    max_size() : Returns the maximum number of elements that the array can hold.    
+
+    operator= : Assigns values to array.
+    operator== : Compares two arrays.
+    operator!= : Compares two arrays.
+    operator< : Checks if an array is less than the other.
+    operator<= : Checks if an array is less than or equal to the other.
+    operator> : Checks if an array is greater than the other.
+    operator>= : Checks if an array is greater than or equal to the other.
+
+    push_back() : Adds a new element at the end of the vector.
+    pop_back() : Removes the last element of the vector.
+    insert() : Inserts new elements before the element at the specified position.
+    erase() : Removes a single element or a range of elements.
+    clear() : Removes all elements from the vector.
+    emplace() : It extends the container by inserting new element at position.
+    emplace_back() : Adds a new element at the end of the vector.
+    resize() : Resizes the container so that it contains ‘n’ elements and destroys all elements beyond the size.
+        - increase the size of the vector default initializes with 0 and initializes the new elements with the given value.
+        - decreases the size of the vector, the elements are destroyed.
+        - doesn't change the capacity of the vector.
+
+    capacity() : Returns the size of the storage space currently allocated for the vector, expressed in terms of elements.
+    shrink_to_fit() : Reduces the capacity of the container to fit its size and destroys all elements beyond the capacity.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+heap in C++
+
+creating heap -
+    1. priority_queue<int> pq; // max heap
+    2. priority_queue<int, vector<int>, greater<int>> pq; // min heap
+    3. priority_queue<int> pq(arr, arr + n); // max heap
+    4. priority_queue<int, vector<int>, greater<int>> pq(arr, arr + n); // min heap    
+
+methods -
+    1. push() : Inserts an element into the heap.
+    2. pop() : Removes the top element from the heap.
+    3. top() : Returns the top element of the heap.
+    4. size() : Returns the number of elements in the heap.
+    5. empty() : Returns whether the heap is empty or not.
+    6. swap() : Swaps the contents of two heaps.
+    7. emplace() : Inserts a new element into the heap.
+
+------------------------------------------------------------------------------------------------------------------
+
+custom comparator in max heap and min heaps
+
+    1. struct CustomComparator {
+        bool operator()(const int& a, const int& b) {
+            // a>b because we want to create a max heap, means it will return the largest element at the top
+            return a < b; // for max heap
+            //what it does is it compares the two elements and returns true if a is less than b, which means it will put b at the top of the heap
+        }
+    };
+
+    //define the custom comparator for pair
+    struct CustomComparator {
+        bool operator()(const pair<int, int>& a, const pair<int, int>& b) {
+            return a.first > b.first; // for min heap
+            //what it does is it compares the first element of the pair and returns true if a.first is greater than b.first, which means it will put b at the top of the heap
+        }
+    };
+
+    1. priority_queue<int, vector<int>, greater<int>> pq; // min heap
+    2. priority_queue<int, vector<int>, less<int>> pq; // max heap
+    3. priority_queue<int, vector<int>, CustomComparator> pq; // custom comparator
+
+    4. priority_queue<pair<int, int>, vector<pair<int, int>>, CustomComparator> pq; // custom comparator for pair
+
+    5. priority_queue<CustomClass, vector<CustomClass>, CustomComparator> pq; // custom comparator for class
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+make_heap(): Converts given range to a heap.
+push_heap(): Arrange the heap after insertion at the end.
+pop_heap(): Moves the max element at the end for deletion.
+sort_heap(): Sort the elements of the max_heap to ascending order.
+is_heap(): Checks if the given range is max_heap.
+is_heap_until(): Returns the largest sub-range that is max_heap.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+built in heap in c++
+
+creating heap -
+    1. make_heap(arr, arr + n); // max heap
+    2. make_heap(arr, arr + n, greater<int>()); // min heap
+
+methods -
+    1. push_heap(arr, arr + n); // Inserts an element into the heap.
+    2. pop_heap(arr, arr + n); // Removes the top element from the heap.
+    3. sort_heap(arr, arr + n); // Sort the elements of the max_heap to ascending order.
+    4. is_heap(arr, arr + n); // Checks if the given range is max_heap.
+    5. is_heap_until(arr, arr + n); // Returns the largest sub-range that is max_heap.
+
+using vectors
+    1. make_heap(v.begin(), v.end()); // max heap
+    2. make_heap(v.begin(), v.end(), greater<int>()); // min heap
+
+methods:
+    1. push_heap(v.begin(), v.end()); // Inserts an element into the heap.
+    2. pop_heap(v.begin(), v.end()); // Removes the top element from the heap.
+    3. sort_heap(v.begin(), v.end()); // Sort the elements of the max_heap to ascending order.
+    4. is_heap(v.begin(), v.end()); // Checks if the given range is max_heap.
+    5. is_heap_until(v.begin(), v.end()); // Returns the largest sub-range that is max_heap.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+built in stack in c++
+
+creation -
+    1. stack<int> s;
+    
+methods -
+    1. push() : Inserts an element into the stack.
+    2. pop() : Removes the top element from the stack.
+    3. top() : Returns the top element of the stack.
+    4. size() : Returns the number of elements in the stack.
+    5. empty() : Returns whether the stack is empty or not.
+    6. swap() : Swaps the contents of two stacks.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+unordered_map in c++
+
+creation syntax:
+    1. unordered_map<int, int> umap;
+    2. unordered_map<int, int> umap = {{1, 1}, {2, 2}, {3, 3}};
+    3. unordered_map<int, int> umap(arr, arr + n);
+
+methods -
+    1. insert() : Inserts key-value pairs into the map.
+        example:
+            umap.insert({1, 1});
+            umap.insert(make_pair(2, 2));
+            umap.insert(pair<int, int>(3, 3));
+    2. erase() : Removes a key-value pair from the map.
+        example:
+            umap.erase(1);
+            umap.erase(umap.begin());
+            umap.erase(umap.find(2), umap.end());
+    3. find() : Searches the map for a key and returns an iterator to it if it is found.
+        example:
+            auto it = umap.find(1);
+            if(it != umap.end()) {
+                cout << "Found " << it->first << " " << it->second << endl;
+            }
+    4. count() : Returns the number of elements with a key in the map.
+        example:
+            cout << umap.count(1) << endl;
+    5. size() : Returns the number of elements in the map.
+    6. empty() : Returns whether the map is empty or not.
+    7. clear() : Removes all elements from the map.
+    8. operator[] : Accesses the element with the given key.
+    9. at() : Accesses the element with the given key.
+    10. begin() : Returns an iterator to the first element.
+    11. end() : Returns an iterator to the theoretical element that follows the last element.
+    12. swap() : Swaps the contents of two maps.
+    13. emplace() : Inserts a new element into the map.
+    14. emplace_hint() : Inserts a new element into the map with a hint.
+    15. equal_range() : Returns a range containing all elements with the given key.
+    16. rehash() : Sets the number of buckets in the container to count.
+    17. reserve() : Sets the number of elements in the container to count.
+    18. max_load_factor() : Returns the maximum load factor.
+    19. max_bucket_count() : Returns the maximum number of buckets that the container can have.
+    20. bucket_count() : Returns the number of buckets in the container.
+    21. bucket_size() : Returns the number of elements in the bucket with the given index.
+    22. bucket() : Returns the bucket index of the element with the given key.
+    23. load_factor() : Returns the average number of elements per bucket.
+    24. hash_function() : Returns the hash function used by the unordered_map.
+    25. key_eq() : Returns the function that compares keys for equality.
+    26. value_comp() : Returns the comparison function used to order the elements in the map.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+map in c++
+
+definition:
+    A map is a collection of key-value pairs.
+
+    syntax:
+        map<key_type, value_type> name;
+        map<key_type, value_type> name = {{key1, value1}, {key2, value2}, {key3, value3}};
+        map<key_type, value_type> name(arr, arr + n);
+
+    methods:
+        insert() : Inserts a key-value pair into the map.
+            Time Complexity: O(log n)
+        erase() : Removes a key-value pair from the map.
+            Time Complexity: O(log n)
+        find() : Searches the map for a key and returns an iterator to it if it is found.
+            Time Complexity: O(log n)
+        count() : Returns the number of elements with a key in the map.
+            Time Complexity: O(log n)
+        size() : Returns the number of elements in the map.
+            Time Complexity: O(1)
+        empty() : Returns whether the map is empty or not.
+            Time Complexity: O(1)
+        clear() : Removes all elements from the map.
+            Time Complexity: O(n)
+        begin() : Returns an iterator to the first element.
+            Time Complexity: O(1)
+        end() : Returns an iterator to the theoretical element that follows the last element.
+            Time Complexity: O(1)
+        swap() : Swaps the contents of two maps.
+            Time Complexity: O(n)
+        emplace() : Inserts a new key-value pair into the map.
+            Time Complexity: O(log n)
+        emplace_hint() : Inserts a new key-value pair into the map with a hint.
+            Time Complexity: O(log n)
+        equal_range() : Returns a range containing all elements with the given key.
+            Time Complexity: O(log n)
+        rehash() : Sets the number of buckets in the container to count.
+            Time Complexity: O(n)
+        reserve() : Sets the number of elements in the container to count.
+            Time Complexity: O(n)
+        max_load_factor() : Returns the maximum load factor.
+            Time Complexity: O(1)
+        max_bucket_count() : Returns the maximum number of buckets that the container can have.
+            Time Complexity: O(1)
+        bucket_count() : Returns the number of buckets in the container.
+            Time Complexity: O(1)
+        bucket_size() : Returns the number of elements in the bucket with the given index.
+            Time Complexity: O(1)
+        bucket() : Returns the bucket index of the element with the given key.
+            Time Complexity: O(1)
+        load_factor() : Returns the average number of elements per bucket.
+            Time Complexity: O(1)
+        hash_function() : Returns the hash function used by the map.
+            Time Complexity: O(1)
+        key_eq() : Returns the function that compares keys for equality.
+            Time Complexity: O(1)
+        value_comp() : Returns the comparison function used to order the elements in the map.
+            Time Complexity: O(1)
+
+map returns values in ascending order by default
+
+map<int, int> m; // map in ascending order
+m.insert({1, 1});
+m.insert(make_pair(2, 2));
+m.insert(pair<int, int>(3, 3));
+map<int, int> m = {{1, 1}, {2, 2}, {3, 3}};
+map<int, int> m(arr, arr + n);
+
+map using greater<int>
+
+map<int, int, greater<int>> m; // map in descending order
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+unordered_set in c++
+
+creation syntax:
+    1. unordered_set<int> uset;
+    2. unordered_set<int> uset = {1, 2, 3};
+    3. unordered_set<int> uset(arr, arr + n);
+
+methods -
+
+    for(auto it = umap.begin();it!=umap.end();it++){
+        cout<<it->first<<" "<<it->second<<endl;
+    }
+
+    1. insert() : Inserts an element into the set.
+        example:
+            uset.insert(1);
+            uset.insert(2);
+            uset.insert(3);
+    2. erase() : Removes an element from the set.
+        example:
+            uset.erase(1);
+            uset.erase(uset.begin());
+            uset.erase(uset.find(2), uset.end());
+    3. find() : Searches the set for an element and returns an iterator to it if it is found.
+        example:
+            auto it = uset.find(1);
+            if(it != uset.end()) {
+                cout << "Found " << *it << endl;
+            }
+        time complexity : O(1)
+    4. count() : Returns the number of elements with a key in the set.
+        example:
+            cout << uset.count(1) << endl;
+    5. size() : Returns the number of elements in the set.
+    6. empty() : Returns whether the set is empty or not.
+    7. clear() : Removes all elements from the set.
+    8. begin() : Returns an iterator to the first element.
+    9. end() : Returns an iterator to the theoretical element that follows the last element.
+    10. swap() : Swaps the contents of two sets.
+    11. emplace() : Inserts a new element into the set.
+    12. emplace_hint() : Inserts a new element into the set with a hint.
+    13. equal_range() : Returns a range containing all elements with the given key.
+    14. rehash() : Sets the number of buckets in the container to count.
+    15. reserve() : Sets the number of elements in the container to count.
+    16. max_load_factor() : Returns the maximum load factor.
+    17. max_bucket_count() : Returns the maximum number of buckets that the container can have.
+    18. bucket_count() : Returns the number of buckets in the container.
+    19. bucket_size() : Returns the number of elements in the bucket with the given index.
+    20. bucket() : Returns the bucket index of the element with the given key.
+    21. load_factor() : Returns the average number of elements per bucket.
+    22. hash_function() : Returns the hash function used by the unordered_set.
+    23. key_eq
+--------------------------------------------------------------------------------------------------------------------
+
+Set
+
+definition:
+    A set is a collection of unique elements.
+
+    syntax:
+        set<type> name;
+        set<type> name = {value1, value2, value3, ...};
+        set<type> name(arr, arr + n);
+
+    methods:
+        insert() : Inserts an element into the set.
+        erase() : Removes an element from the set.
+        find() : Searches the set for an element and returns an iterator to it if it is found.
+        count() : Returns the number of elements with a key in the set.
+        size() : Returns the number of elements in the set.
+        empty() : Returns whether the set is empty or not.
+        clear() : Removes all elements from the set.
+        begin() : Returns an iterator to the first element.
+        end() : Returns an iterator to the theoretical element that follows the last element.
+        swap() : Swaps the contents of two sets.
+        emplace() : Inserts a new element into the set.
+        emplace_hint() : Inserts a new element into the set with a hint.
+        equal_range() : Returns a range containing all elements with the given key.
+        rehash() : Sets the number of buckets in the container to count.
+        reserve() : Sets the number of elements in the container to count.
+        max_load_factor() : Returns the maximum load factor.
+        max_bucket_count() : Returns the maximum number of buckets that the container can have.
+        bucket_count() : Returns the number of buckets in the container.
+        bucket_size() : Returns the number of elements in the bucket with the given index.
+        bucket() : Returns the bucket index of the element with the given key.
+        load_factor() : Returns the average number of elements per bucket.
+        hash_function() : Returns the hash function used by the set.
+        key_eq() : Returns the function that compares keys for equality.
+        value_comp() : Returns the comparison function used to order the elements in the set.
+
+set<int> s;// set in ascending order
+s.insert(1);
+s.insert(2);
+s.insert(3);
+
+
+set<int> s = {1, 2, 3};
+set<int> s(arr, arr + n);
+
+set greater<int>
+
+set<int, greater<int>> s; //set in descending order
+
+--------------------------------------------------------------------------------------------------------------------
+#include <iostream>
+#include <cmath>
+double result = sqrt(num);
+
+--------------------------------------------------------------------------------------------------------------------
+string
+
+definition:
+    A string is a sequence of characters.
+
+    syntax:
+        string name;
+        string name = "value";
+        string name("value");
+
+    methods:
+        length() : Returns the length of the string.
+        size() : Returns the size of the string.
+        empty() : Returns whether the string is empty.
+        clear() : Clears the string.
+        append() : Appends a string to the end of another string.
+        insert() : Inserts a string at the specified position.
+        erase() : Erases a part of the string.
+        replace() : Replaces a part of the string with another string.
+        substr() : Returns a substring.
+        find() : Finds the first occurrence of a substring.
+        rfind() : Finds the last occurrence of a substring.
+        find_first_of() : Finds the first occurrence of any character from a set of characters.
+        find_last_of() : Finds the last occurrence of any character from a set of characters.
+        find_first_not_of() : Finds the first occurrence of any character not in a set of characters.
+        find_last_not_of() : Finds the last occurrence of any character not in a set of characters.
+        compare() : Compares two strings.
+        c_str() : Returns a C-style string.
+        data() : Returns a pointer to the string's internal data.
+        copy() : Copies a substring into a character array.
+        swap() : Swaps the contents of two strings.
+        begin() : Returns an iterator to the first character.
+        end() : Returns an iterator to the character following the last character.
+        rbegin() : Returns a reverse iterator to the last character.
+        rend() : Returns a reverse iterator to the character preceding the first character.
+        cbegin() : Returns a constant iterator to the first character.
+        cend() : Returns a constant iterator to the character following the last character.
+        crbegin() : Returns a constant reverse iterator to the last character.
+        crend() : Returns a constant reverse iterator to the character preceding the first character.
+
+        Time Complexity of Common String Operations
+        length() / size(): O(1)
+        These methods return the length of the string, which is stored internally, so the operation is constant time.
+
+        empty(): O(1)
+        This method checks if the string is empty, which is a constant time operation.
+
+        clear(): O(n)
+        This method clears the string, which involves setting each character to a null value, so it takes linear time.
+
+        append(): O(n)
+        Appending a string involves copying characters from the appended string, so it takes linear time relative to the length of the string being appended.
+
+        insert(): O(n)
+        Inserting a string at a specific position involves shifting characters, so it takes linear time.
+
+        erase(): O(n)
+        Erasing a part of the string involves shifting characters, so it takes linear time.
+
+        replace(): O(n)
+        Replacing a part of the string involves both erasing and inserting, so it takes linear time.
+
+        substr(): O(n)
+        Creating a substring involves copying characters, so it takes linear time.
+
+        find() / rfind(): O(n)
+        Finding a substring involves scanning the string, so it takes linear time.
+
+        Space Complexity of Common String Operations
+        length() / size(): O(1)
+        These methods do not require additional space beyond a few variables.
+
+        empty(): O(1)
+        This method does not require additional space beyond a few variables.
+
+        clear(): O(1)
+        This method does not require additional space beyond a few variables.
+
+        append(): O(n)
+        Appending a string may require allocating new space if the current capacity is exceeded.
+
+        insert(): O(n)
+        Inserting a string may require allocating new space if the current capacity is exceeded.
+
+        erase(): O(1)
+        Erasing a part of the string does not require additional space beyond a few variables.
+
+        replace(): O(n)
+        Replacing a part of the string may require allocating new space if the current capacity is exceeded.
+
+        substr(): O(n)
+        Creating a substring requires allocating new space for the new string.
+
+        find() / rfind(): O(1)
+        Finding a substring does not require additional space beyond a few variables.
+
+        #include <iostream>
+        #include <string>
+
+        int main() {
+            std::string str = "Hello, World!";
+            
+            // length() / size()
+            std::cout << "Length: " << str.length() << std::endl;
+            
+            // empty()
+            std::cout << "Is empty: " << std::boolalpha << str.empty() << std::endl;
+            
+            // clear()
+            str.clear();
+            std::cout << "After clear, is empty: " << std::boolalpha << str.empty() << std::endl;
+            
+            // append()
+            str = "Hello";
+            str.append(", World!");
+            std::cout << "After append: " << str << std::endl;
+            
+            // insert()
+            str.insert(5, " Beautiful");
+            std::cout << "After insert: " << str << std::endl;
+            
+            // erase()
+            str.erase(5, 10);
+            std::cout << "After erase: " << str << std::endl;
+            
+            // replace()
+            str.replace(7, 5, "Universe");
+            std::cout << "After replace: " << str << std::endl;
+            
+            // substr()
+            std::string substr = str.substr(7, 8);
+            std::cout << "Substring: " << substr << std::endl;
+            
+            // find()
+            size_t pos = str.find("Universe");
+            if (pos != std::string::npos) {
+                std::cout << "Found 'Universe' at position: " << pos << std::endl;
+            }
+            
+            return 0;
+        }
+
+        find()
+        size_t find(const std::string& str, const std::string& substr) {
+            if (substr.empty()) return 0;
+            for (size_t i = 0; i <= str.size() - substr.size(); ++i) {
+                size_t j = 0;
+                while (j < substr.size() && str[i + j] == substr[j]) {
+                    ++j;
+                }
+                if (j == substr.size()) {
+                    return i;
+                }
+            }
+            return std::string::npos;
+        }
+
+        #include <vector>
+
+        // Knuth-Morris-Pratt (KMP) algorithm
+        std::vector<int> computeLPSArray(const std::string& pattern) {
+            int m = pattern.size();
+            std::vector<int> lps(m, 0);
+            int len = 0;
+            int i = 1;
+            while (i < m) {
+                if (pattern[i] == pattern[len]) {
+                    len++;
+                    lps[i] = len;
+                    i++;
+                } else {
+                    if (len != 0) {
+                        len = lps[len - 1];
+                    } else {
+                        lps[i] = 0;
+                        i++;
+                    }
+                }
+            }
+            return lps;
+        }
+
+        std::vector<int> KMPSearch(const std::string& text, const std::string& pattern) {
+            std::vector<int> result;
+            int n = text.size();
+            int m = pattern.size();
+            std::vector<int> lps = computeLPSArray(pattern);
+            int i = 0;
+            int j = 0;
+            while (i < n) {
+                if (pattern[j] == text[i]) {
+                    i++;
+                    j++;
+                }
+                if (j == m) {
+                    result.push_back(i - j);
+                    j = lps[j - 1];
+                } else if (i < n && pattern[j] != text[i]) {
+                    if (j != 0) {
+                        j = lps[j - 1];
+                    } else {
+                        i++;
+                    }
+                }
+            }
+            return result;
+        }
+
+        #include <iostream>
+        #include <string>
+
+        int main() {
+            int num = 9;
+            std::string str = std::to_string(num);
+            std::cout << "The string representation of the number is: " << str << std::endl;
+            return 0;
+        }
+
+        #include <iostream>
+        #include <string>
+
+        int main() {
+            std::string str = "123";
+            int num = std::stoi(str);
+            std::cout << "The integer representation of the string is: " << num << std::endl;
+
+            char ch = '7';
+            int digit = ch - '0';
+            std::cout << "The integer representation of the char is: " << digit << std::endl;
+
+            return 0;
+        }
+
+        convert single digit to char
+        char convertDigitToChar(int digit) {
+            return digit + '0';
+        }
+
+-----------------------------------------------------------------------
+
+sort method:
+
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+int main() {
+    std::vector<int> vec = {5, 3, 8, 1, 2};
+
+    // Sort in ascending order
+    std::sort(vec.begin(), vec.end());
+    std::cout << "Sorted in ascending order: ";
+    for (int num : vec) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    // Sort in descending order
+    std::sort(vec.begin(), vec.end(), std::greater<int>());
+    std::cout << "Sorted in descending order: ";
+    for (int num : vec) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+int main() {
+    std::vector<std::vector<int>> vec = {{3, 2, 1}, {1, 3, 2}, {2, 1, 3}};
+
+    // Sort vector of vectors based on the first element
+    std::sort(vec.begin(), vec.end(), [](const std::vector<int>& a, const std::vector<int>& b) {
+        return a[0] < b[0];
+    });
+
+    std::cout << "Sorted vector of vectors based on the first element: " << std::endl;
+    for (const auto& v : vec) {
+        for (int num : v) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
+
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+int main() {
+    std::vector<int> vec = {5, 3, 8, 1, 2};
+
+    // Find the maximum element in the vector
+    auto maxElement = std::max_element(vec.begin(), vec.end());
+    if (maxElement != vec.end()) {
+        std::cout << "The maximum element in the vector is: " << *maxElement << std::endl;
+    } else {
+        std::cout << "The vector is empty." << std::endl;
+    }
+
+    return 0;
+}
+------------------------------
+
+functor
+class CustomComparator {
+public:
+    // Constructor that takes two parameters
+    CustomComparator(int baseValue, int multiplier)
+        : baseValue_(baseValue), multiplier_(multiplier) {}
+
+    // Comparison logic using both parameters
+    bool operator()(int a, int b) const {
+        int modA = (a % baseValue_) * multiplier_;
+        int modB = (b % baseValue_) * multiplier_;
+        return modA < modB;
+    }
+
+private:
+    int baseValue_;
+    int multiplier_;
+};
+
+int main() {
+    std::vector<int> vec = {10, 21, 33, 40, 50};
+
+    // Create the comparator with base value 10 and multiplier 2
+    CustomComparator comp(10, 2);
+
+    // Sort the vector using the custom comparator
+    std::sort(vec.begin(), vec.end(), comp);
+
+    // Print the sorted vector
+    for (int num : vec) {
+        std::cout << num << " ";
+    }
+
+    return 0;
+}
+
+
+bool isNStraightHand(vector<int>& hand, int groupSize) {
+        // Map to store the count of each card value
+        map<int, int> cardCount;
+
+        for (int card : hand) {
+            cardCount[card]++;
+        }
+
+        // Queue to keep track of the number of new groups
+        // starting with each card value
+        queue<int> groupStartQueue;
+        int lastCard = -1, currentOpenGroups = 0;
+
+        for (auto& entry : cardCount) {
+            int currentCard = entry.first;
+            // Check if there are any discrepancies in the sequence
+            // or more groups are required than available cards
+            if ((currentOpenGroups > 0 && currentCard > lastCard + 1) ||
+                currentOpenGroups > cardCount[currentCard]) {
+                return false;
+            }
+            // Calculate the number of new groups starting
+            // with the current card
+            groupStartQueue.push(cardCount[currentCard] - currentOpenGroups);
+            lastCard = currentCard;
+            currentOpenGroups = cardCount[currentCard];
+            // Maintain the queue size to be equal to groupSize
+            if (groupStartQueue.size() == groupSize) {
+                currentOpenGroups -= groupStartQueue.front();
+                groupStartQueue.pop();
+            }
+        }
+        return currentOpenGroups == 0;
+    }

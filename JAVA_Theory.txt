@@ -1,0 +1,202 @@
+String -
+
+Methods:
+1. length() - Returns the length of the string.
+------------------------------------------------------------------------------------------------------------------------------
+
+StringBuilder -
+
+Methods:
+1. append() - Appends the string representation of the argument to the sequence.
+    s.append(char c)
+2. insert() - Inserts the string representation of the argument into the sequence.
+    s.insert(int offset, char c)
+3. replace() - Replaces the characters in a substring of this sequence with characters in the specified String.
+    s.replace(int start, int end, String str)
+4. delete() - Removes the characters in a substring of this sequence.
+    s.delete(int start, int end)
+5. reverse() - Causes this character sequence to be replaced by the reverse of the sequence.
+    s.reverse()
+6. capacity() - Returns the current capacity.
+    s.capacity()
+7. ensureCapacity() - Ensures that the capacity is at least equal to the specified minimum.
+    s.ensureCapacity(int minimumCapacity)
+8. setLength() - Sets the length of the character sequence.
+    s.setLength(int newLength)
+9. charAt() - Returns the character at the specified index.
+    s.charAt(int index)
+10. setCharAt() - Sets the character at the specified index.
+    s.setCharAt(int index, char ch)
+11. getChars() - Copies characters from this sequence into the destination character array.
+    s.getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
+12. indexOf() - Returns the index within this string of the first occurrence of the specified substring.
+    s.indexOf(String str)
+13. lastIndexOf() - Returns the index within this string of the last occurrence of the specified substring.
+    s.lastIndexOf(String str)
+14. substring() - Returns a new String that contains a subsequence of characters currently contained in this character sequence.
+    s.substring(int start)
+    s.substring(int start, int end)
+15. subSequence() - Returns a new character sequence that is a subsequence of this sequence.
+    s.subSequence(int start, int end)
+16. toString() - Returns a string representing the data in this sequence.
+    s.toString()
+17. trimToSize() - Attempts to reduce storage used for the character sequence.
+    s.trimToSize()
+--------------------------------------------------------------------------------------------------------------------------------
+
+Normal array 
+int arr[] = {1, 2, 3, 4, 5};
+int arr[] = new int[5];
+
+methods:
+1. length - Returns the length of the array.
+2. clone - Returns a copy of the array.
+3. equals - Compares two arrays.
+4. fill - Assigns the specified data type value to each element of the specified range of the specified array of data type.
+5. sort - Sorts the specified array of objects into an ascending order, according to the natural ordering of its elements.
+6. binarySearch - Searches the specified array of data type for the specified value using the binary search algorithm.
+7. copyOf - Copies the specified array, truncating or padding with zeros (if necessary) so the copy has the specified length.
+8. copyOfRange - Copies the specified range of the specified array into a new array.
+9. toString - Returns a string representation of the contents of the specified array.
+10. hashCode - Returns a hash code based on the contents of the specified array.
+11. asList - Returns a fixed-size list backed by the specified array.
+12. stream - Returns a sequential Stream with the specified array as its source.
+13. parallelStream - Returns a possibly parallel Stream with the specified array as its source.
+14. setAll - Assigns the specified value to each element of the specified array of data type.
+15. parallelPrefix - Cumulates, in parallel, each element of the given array in place, using the supplied function.
+16. parallelSetAll - Set all elements of the specified array, in parallel, using the provided generator function.
+17. spliterator - Creates a Spliterator over the elements in a range of the specified array.
+
+------------------------------------------------------------------------------------------------------------
+hashset - 
+creation :
+HashSet<String> set = new HashSet<String>();
+
+methods:
+1. add - Adds the specified element to this set if it is not already present.
+2. clear - Removes all of the elements from this set.
+3. clone - Returns a shallow copy of this HashSet instance: the elements themselves are not cloned.
+4. contains - Returns true if this set contains the specified element.
+5. isEmpty - Returns true if this set contains no elements.
+6. iterator - Returns an iterator over the elements in this set.
+7. remove - Removes the specified element from this set if it is present.
+8. size - Returns the number of elements in this set.
+9. toArray - Returns an array containing all of the elements in this set.
+10. addAll - Adds all of the elements in the specified collection to this set if they're not already present.
+11. containsAll - Returns true if this set contains all of the elements of the specified collection.
+12. removeAll - Removes from this set all of its elements that are contained in the specified collection.
+13. retainAll - Retains only the elements in this set that are contained in the specified collection.
+14. equals - Compares the specified object with this set for equality.
+15. hashCode - Returns the hash code value for this set.
+16. spliterator - Creates a late-binding and fail-fast Spliterator over the elements in this set.
+17. stream - Returns a sequential Stream with this collection as its source.
+18. parallelStream - Returns a possibly parallel Stream with this collection as its source.
+19. removeIf - Removes all of the elements of this collection that satisfy the given predicate.
+20. forEach - Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+21. toArray - Returns an array containing all of the elements in this set.
+
+----------------------------------------------------------------------------------------------------------------------------
+
+Linkedhashset -
+
+creation: 
+LinkedHashSet<String> set = new LinkedHashSet<String>();
+
+methods-
+1. add - Adds the specified element to this set if it is not already present.
+2. clear - Removes all of the elements from this set.
+3. clone - Returns a shallow copy of this LinkedHashSet instance: the elements themselves are not cloned.
+4. contains - Returns true if this set contains the specified element.
+5. isEmpty - Returns true if this set contains no elements.
+6. iterator - Returns an iterator over the elements in this set.
+7. remove - Removes the specified element from this set if it is present.
+8. size - Returns the number of elements in this set.
+9. toArray - Returns an array containing all of the elements in this set.
+    example :
+    import java.util.LinkedHashSet;
+    import java.util.Arrays;
+    public class LinkedHashSetExample {
+        public static void main(String[] args) {
+            LinkedHashSet<String> set = new LinkedHashSet<>();
+            set.add("A");
+            set.add("B");
+            set.add("C");
+
+            // Convert LinkedHashSet to array
+            String[] array = set.toArray(new String[0]);
+
+            // Print the array
+            System.out.println(Arrays.toString(array));
+        }
+    }
+
+10. addAll - Adds all of the elements in the specified collection to this set if they're not already present.
+11. containsAll - Returns true if this set contains all of the elements of the specified collection.
+12. removeAll - Removes from this set all of its elements that are contained in the specified collection.
+13. retainAll - Retains only the elements in this set that are contained in the specified collection.
+14. equals - Compares the specified object with this set for equality.
+15. hashCode - Returns the hash code value for this set.
+16. spliterator - Creates a late-binding and fail-fast Spliterator over the elements in this set.
+17. stream - Returns a sequential Stream with this collection as its source.
+18. parallelStream - Returns a possibly parallel Stream with this collection as its source.
+19. removeIf - Removes all of the elements of this collection that satisfy the given predicate.
+20. forEach - Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+
+----------------------------------------------------------------------------------------------------------------------------
+ArrayList -
+Creation:
+ArrayList<String> list = new ArrayList<String>();
+
+Methods:
+1. add - Appends the specified element to the end of this list.
+2. addAll - Appends all of the elements in the specified collection to the end of this list, in the order that they are returned by the specified collection's iterator.
+3. clear - Removes all of the elements from this list.
+4. clone - Returns a shallow copy of this ArrayList instance.
+5. contains - Returns true if this list contains the specified element.
+6. get - Returns the element at the specified position in this list.
+7. indexOf - Returns the index of the first occurrence of the specified element in this list, or -1 if this list does not contain the element.
+8. isEmpty - Returns true if this list contains no elements.
+9. iterator - Returns an iterator over the elements in this list in proper sequence.
+10. remove - Removes the element at the specified position in this list.
+11. size - Returns the number of elements in this list.
+12. toArray - Returns an array containing all of the elements in this list in proper sequence.
+13. removeIf - Removes all of the elements of this collection that satisfy the given predicate.
+14. forEach - Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+15. replaceAll - Replaces each element of this list with the result of applying the operator to that element.
+16. sort - Sorts this list according to the order induced by the specified Comparator.
+17. spliterator - Creates a late-binding and fail-fast Spliterator over the elements in this list.
+18. stream - Returns a sequential Stream with this collection as its source.
+19. parallelStream - Returns a possibly parallel Stream with this collection as its source.
+20. listIterator - Returns a list iterator over the elements in this list (in proper sequence).
+21. subList - Returns a view of the portion of this list between the specified fromIndex, inclusive, and toIndex, exclusive.
+22. lastIndexOf - Returns the index of the last occurrence of the specified element in this list, or -1 if this list does not contain the element.
+
+----------------------------------------------------------------------------------------------------------------------------
+
+PriorityQueue:
+
+creation:
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+methods:
+1. add - Inserts the specified element into this priority queue.
+2. clear - Removes all of the elements from this priority queue.
+3. clone - Returns a shallow copy of this PriorityQueue instance.
+4. contains - Returns true if this queue contains the specified element.
+5. element - Retrieves, but does not remove, the head of this queue.
+6. isEmpty - Returns true if this queue contains no elements.
+7. iterator - Returns an iterator over the elements in this queue.
+8. offer - Inserts the specified element into this priority queue.
+9. peek - Retrieves, but does not remove, the head of this queue, or returns null if this queue is empty.
+10. poll - Retrieves and removes the head of this queue, or returns null if this queue is empty.
+11. remove - Removes a single instance of the specified element from this queue, if it is present.
+12. size - Returns the number of elements in this collection.
+13. toArray - Returns an array containing all of the elements in this queue.
+14. removeIf - Removes all of the elements of this collection that satisfy the given predicate.
+15. forEach - Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
+16. spliterator - Creates a Spliterator over the elements in this queue.
+17. stream - Returns a sequential Stream with this collection as its source.
+18. parallelStream - Returns a possibly parallel Stream with this collection as its source.
+
+----------------------------------------------------------------------------------------------------------------------------

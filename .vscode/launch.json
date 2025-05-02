@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Reverse_the_string",
+      "request": "launch",
+      "mainClass": "LC_JAVA.Reverse_the_string",
+      "projectName": "Inv_prep_ce3c5e51"
+    },
+    {
+      "type": "java",
+      "name": "Driver",
+      "request": "launch",
+      "mainClass": "LC_JAVA.Driver",
+      "projectName": "Inv_prep_ce3c5e51"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/pdeepak/Documents/personal/Study/Inv_prep/CPP_Pratice",
+      "program": "c:/Users/pdeepak/Documents/personal/Study/Inv_prep/CPP_Pratice/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
