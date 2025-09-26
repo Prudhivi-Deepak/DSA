@@ -247,7 +247,67 @@ custom comparator in max heap and min heaps
     4. priority_queue<pair<int, int>, vector<pair<int, int>>, CustomComparator> pq; // custom comparator for pair
 
     5. priority_queue<CustomClass, vector<CustomClass>, CustomComparator> pq; // custom comparator for class
+------------------------------------------------------------------------------------------------------------------------------------------------
 
+deque
+
+    1. Deque is a double-ended queue that allows insertion and deletion of elements from both ends.
+    2. It is a sequence container that can be expanded or contracted on both ends.
+    3. It is a dynamic array that allows insertion and deletion of elements from both ends.
+    4. It is a sequence container that allows random access to its elements.
+    5. It is a sequence container that allows insertion and deletion of elements from both ends.
+    6. It is a sequence container that allows random access to its elements.
+
+example:
+    1. deque<int> dq;
+    2. deque<int> dq = {1, 2, 3};
+    3. deque<int> dq(arr, arr + n);
+    4. deque<int> dq{{1, 2, 3}};
+    5. deque<int> dq{{1, 2, 3}, {4, 5, 6}};
+    6. deque<int> dq{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+operations:
+    1. push_back() : Adds a new element at the end of the deque.
+    2. push_front() : Adds a new element at the beginning of the deque.
+    3. pop_back() : Removes the last element of the deque.
+    4. pop_front() : Removes the first element of the deque.
+    5. front() : Returns the first element of the deque.
+    6. back() : Returns the last element of the deque.
+    7. size() : Returns the number of elements in the deque.
+    8. empty() : Returns whether the deque is empty or not.
+    9. clear() : Removes all elements from the deque.
+    10. insert() : Inserts a new element at a specified position in the deque.
+    11. erase() : Removes a single element or a range of elements from the deque.
+    12. swap() : Swaps the contents of two deques.
+    13. emplace() : Inserts a new element at a specified position in the deque.
+    14. emplace_back() : Adds a new element at the end of the deque.
+    15. emplace_front() : Adds a new element at the beginning of the deque.
+    16. begin() : Returns an iterator pointing to the first element of the deque.
+    17. end() : Returns an iterator pointing to the theoretical element that follows the last element of the deque.
+    18. rbegin() : Returns a reverse iterator pointing to the last element of the deque.
+    19. rend() : Returns a reverse iterator pointing to the theoretical element that precedes the first element of the deque.
+    20. cbegin() : Returns a constant iterator pointing to the first element of the deque.
+    21. cend() : Returns a constant iterator pointing to the theoretical element that follows the last element of the deque.
+    22. crbegin() : Returns a constant reverse iterator pointing to the last element of the deque.
+    23. crend() : Returns a constant reverse iterator pointing to the theoretical element that precedes the first element of the deque.
+    24. at() : Returns the value at the given index.
+    25. operator[] : Returns the value at the given index.
+    26. data() : Returns a direct pointer to the memory array used internally by the deque to store its owned elements.
+    27. max_size() : Returns the maximum number of elements that the deque can hold.
+    28. resize() : Resizes the deque to contain 'n' elements.
+    29. reserve() : Reserves the specified number of elements in the deque.
+    30. shrink_to_fit() : Reduces the capacity of the deque to fit its size and destroys all elements beyond the capacity.
+    31. assign() : Assigns new values to the deque, replacing its current contents.
+    32. assign() : Assigns new values to the deque, replacing its current contents.
+    33. fill() : Assigns new value to the elements in the deque.
+    34. swap() : Swaps the contents of two deques. 
+    35. operator= : Assigns values to deque.
+    36. operator== : Compares two deques.
+    37. operator!= : Compares two deques.
+    38. operator< : Checks if a deque is less than the other.
+    39. operator<= : Checks if a deque is less than or equal to the other.
+    40. operator> : Checks if a deque is greater than the other.
+    41. operator>= : Checks if a deque is greater than or equal to the other.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -298,6 +358,14 @@ methods -
     4. size() : Returns the number of elements in the stack.
     5. empty() : Returns whether the stack is empty or not.
     6. swap() : Swaps the contents of two stacks.
+
+    clear all elements from stack -
+        while(!s.empty()) {
+            s.pop();
+        }
+    clear all elements at once 
+        stack<int> s;
+        s = stack<int>(); // clear all elements at once
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 unordered_map in c++
@@ -435,8 +503,20 @@ creation syntax:
 
 methods -
 
-    for(auto it = umap.begin();it!=umap.end();it++){
-        cout<<it->first<<" "<<it->second<<endl;
+    Iterate through  unordered_set
+    1. for(auto it = uset.begin(); it != uset.end(); it++) {
+        cout << *it << " ";
+    }
+
+    2. for(auto it : uset) {
+        cout << it << " ";
+    }
+
+    using while loop
+    1. auto it = uset.begin();
+    while(it != uset.end()) {
+        cout << *it << " ";
+        it++;
     }
 
     1. insert() : Inserts an element into the set.
@@ -574,6 +654,8 @@ definition:
         cend() : Returns a constant iterator to the character following the last character.
         crbegin() : Returns a constant reverse iterator to the last character.
         crend() : Returns a constant reverse iterator to the character preceding the first character.
+        pop_back(): pops out the last element in the string;
+        back(): Returns the last element of the string
 
         Time Complexity of Common String Operations
         length() / size(): O(1)

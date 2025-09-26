@@ -1,0 +1,23 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+    public:
+        int no_of_ways(int i, int n, vector<int> &dp){
+            if(i>n) return 0;
+            if(i==n) return 1;
+            if(dp[i]!=-1) return dp[i];
+    
+            return dp[i] = no_of_ways(i+1, n, dp) + no_of_ways(i+2, n, dp);
+        }
+        int climbStairs(int n) {
+            vector<int> dp(n+2, 0);
+            dp[n] = 1;
+            for(int i=n-1; i>=0; i--){
+                dp[i] = dp[i+1] + dp[i+2];
+            }
+            return dp[0];
+            // return no_of_ways(0,n,dp);
+        }
+    };

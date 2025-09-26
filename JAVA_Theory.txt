@@ -143,6 +143,7 @@ methods-
 20. forEach - Performs the given action for each element of the Iterable until all elements have been processed or the action throws an exception.
 
 ----------------------------------------------------------------------------------------------------------------------------
+import java.util.ArrayList;
 ArrayList -
 Creation:
 ArrayList<String> list = new ArrayList<String>();
@@ -155,6 +156,7 @@ Methods:
 5. contains - Returns true if this list contains the specified element.
 6. get - Returns the element at the specified position in this list.
 7. indexOf - Returns the index of the first occurrence of the specified element in this list, or -1 if this list does not contain the element.
+8. set - Replaces the element at the specified position in this list with the specified element.
 8. isEmpty - Returns true if this list contains no elements.
 9. iterator - Returns an iterator over the elements in this list in proper sequence.
 10. remove - Removes the element at the specified position in this list.
