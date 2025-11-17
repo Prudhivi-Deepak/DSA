@@ -1,0 +1,466 @@
+
+1. Project Management & Setup:
+    ng new <project-name>: Creates a new Angular application with a specified name.
+    ng add <package-name>: Adds support for an external library to your project.
+    ng update: Updates the Angular framework and CLI to the latest stable version.
+    ng config: Retrieves or sets Angular configuration values in angular.json.
+
+2. Code Generation (Schematics):
+    ng generate <schematic-type> <name> (or ng g <schematic-type> <name>): Generates various Angular artifacts:
+    component (c): Creates a new component.
+    service (s): Creates a new service.
+    module (m): Creates a new module.
+    directive (d): Creates a new directive.
+    pipe (p): Creates a new pipe.
+    guard (g): Creates a new route guard.
+    class (cl): Creates a new class.
+    interface (i): Creates a new interface.
+    enum (e): Creates a new enum.
+    interceptor: Creates a new HTTP interceptor.
+    webWorker: Creates a new web worker.
+    
+3. Development & Build:
+    ng serve: Serves the application in a development server, enabling live reloading.
+    ng build: Compiles the Angular application into deployable artifacts (development or production builds).
+    ng test: Runs unit tests for the application.
+    ng e2e: Runs end-to-end tests for the application.
+    ng lint: Checks the application for linting warnings and errors.
+    ng deploy: Deploys the application to a specified hosting service.
+    ng run: Runs an Architect target defined in your angular.json file.
+    ng extract-i18n: Extracts internationalization (i18n) messages from your application.
+
+4. Utility & Information:
+    ng help: Displays help for a given command or lists all available commands.
+    ng version: Displays the Angular CLI version and other relevant package versions.
+    ng analytics: Configures or displays Angular CLI usage analytics settings.
+    ng cache: Manages the persistent disk cache for CLI operations.
+    ng completion: Generates shell completion scripts for the Angular CLI.
+-------------------------------------------------------------------------------
+
+Dependncy Injection
+--------------------
+    - A design pattern used in which a components or services are provided with their dependencies rather than hard coding them within the component or service.
+    - This allows for better modularity, easier testing, and improved maintainability of the code
+    key concepts : Providers
+    providers:
+        - we can register a service as a provider in an Angular module, component, or directive.
+        - app.module.ts : providers: [MyService] - this is at module level
+        - component.ts : @component({ providers: [MyService] }) - this is at component level
+    Hierarchical Injectors:
+        - Angular uses a hierarchical injector system to manage dependencies.
+        - Each component has its own injector, which is a child of the module injector.
+        - When a component or service requests a dependency, Angular's DI system looks for the provider in the following order:
+            1. Component Level
+            2. Module Level
+            3. Root Level
+    Injection Tokens and Injection Mechanism:
+        - A unique identifier used to register and retrieve dependencies in the DI system.
+        - Useful when injecting values that are not classes, such as strings or configuration objects.
+        - Example: 
+            const API_URL = new InjectionToken<string>('API_URL');
+            providers: [{ provide: API_URL, useValue: 'https://api.example.com' }]
+        - Example from ICube application for injection tokens:
+            Suppose ICube has a configuration service that provides API endpoints. You can use an injection token to inject the configuration object.
+
+            // config.token.ts
+            import { InjectionToken } from '@angular/core';
+            export const ICUBE_CONFIG = new InjectionToken<any>('ICUBE_CONFIG');
+
+            // app.module.ts
+            import { ICUBE_CONFIG } from './config.token';
+            @NgModule({
+            providers: [
+                { provide: ICUBE_CONFIG, useValue: { apiUrl: 'https://icube.example.com/api' } }
+            ]
+            })
+
+            // some.service.ts
+            import { Inject, Injectable } from '@angular/core';
+            import { ICUBE_CONFIG } from './config.token';
+
+            @Injectable()
+            export class SomeService {
+            constructor(@Inject(ICUBE_CONFIG) private config: any) {
+                console.log(this.config.apiUrl); // Outputs: https://icube.example.com/api
+            }
+            }
+        - Example for @Injectable with providedIn
+            @Injectable({
+            providedIn: 'root' // This makes the service available application-wide without needing to add it to providers array
+            })
+            export class MyService {
+            // service code
+            }
+
+            import { MyService } from './my-service';
+            @Component({    
+            selector: 'app-my-component',
+            templateUrl: './my-component.html'
+            })
+
+            - If you do not use providedIn, you must manually add the service to the providers array of a module or component.
+
+                MyService.ts
+                @Injectable()
+                export class MyService {
+                    // service code
+                }
+
+                // app.module.ts
+                @NgModule({
+                    providers: [MyService], // Must manually add here
+                    // ...
+                })
+
+                import { MyService } from './my-service';
+                @Component({    
+                    selector: 'app-my-component',
+                    templateUrl: './my-component.html'
+                })
+------------------------------------------------------------------------------
+Two-way binding
+----------------
+    - A mechanism that allows for automatic synchronization of data between the model (component class) and the view (template).
+    - Changes in the model are reflected in the view, and changes in the view are reflected in the model.
+    - Achieved using the ngModel directive.
+    Example:
+        <input [(ngModel)]="username" placeholder="Enter your name">
+        <p>Hello, {{ username }}!</p>
+    Explanation:
+        - The [(ngModel)] syntax is a combination of property binding [ngModel] and event binding (ngModelChange).
+        - When the user types in the input field, the username property in the component class is updated.
+        - When the username property is updated programmatically, the input field reflects the new value.
+    Requirements:
+        - To use ngModel, you need to import FormsModule from @angular/forms in your app.module.ts or relevant module.
+        Example:
+            import { FormsModule } from '@angular/forms';
+            @NgModule({
+                imports: [
+                    FormsModule,
+                    // other imports
+                ],
+                // ...
+            })
+------------------------------------------------------------------------------
+Every component should be listed in declarations of NgModule
+    - This is necessary for Angular to recognize and use the component within the application.
+    - If a component is not declared in any NgModule, Angular will throw an error when you try to use it in a template.
+    Example:
+        import { NgModule } from '@angular/core';
+        import { BrowserModule } from '@angular/platform-browser';
+        import { AppComponent } from './app.component';
+        import { MyComponent } from './my-component/my-component.component';
+
+        @NgModule({
+            declarations: [
+                AppComponent,
+                MyComponent
+            ],
+            imports: [
+                BrowserModule
+            ],
+            bootstrap: [AppComponent]
+        })
+------------------------------------------------------------------------------
+LifeCycle Hooks
+--------------------
+each component has its own lifecycle, which is managed by Angular. Angular provides several lifecycle hooks that allow you to tap into key moments in a component's lifecycle to perform custom logic. Here are the most commonly used lifecycle hooks:
+
+Angular will constantly check when the data-bound properties changes & 
+accordingly update both the view & the Component instances, as required
+The order of the execution for these lifecycle hooks is important.
+The Component instance will be destroyed & 
+will be removed its rendered templates from the 
+DOM by Angular when the lifecycle ends
+here DOM is Document Object Model,
+
+1. ngOnChanges:
+    - Triggered when the Angular set or reset the data-bound input properties
+    Example:
+        ngOnChanges(changes: SimpleChanges) {
+            for (let propName in changes) {
+                let change = changes[propName];
+                let current = JSON.stringify(change.currentValue);
+                let previous = JSON.stringify(change.previousValue);
+                console.log(`ngOnChanges: ${propName} changed from ${previous} to ${current}`);
+            }
+        }
+
+2. ngOnInit:
+    - Used to initialize the Component or Directive after Angular sets the 
+        initial display of data-bound properties and sets input properties.
+    Example:
+        ngOnInit() {
+            console.log('ngOnInit: Component initialized');
+            this.fetchData();
+        }
+
+3. ngDoCheck:
+    - Called immediately after changes detected by ngOnChanges() and 
+        after the initial execution of ngOnInit().
+    Example:
+        ngDoCheck() {
+            console.log('ngDoCheck: Custom change detection logic');
+            if (this.previousValue !== this.currentValue) {
+                this.previousValue = this.currentValue;
+                this.performAction();
+            }
+        }
+
+4. ngAfterContentInit:
+    - Used to perform initialization after Angular projects 
+        external content into the component's view.
+    Example:
+        ngAfterContentInit() {
+            console.log('ngAfterContentInit: Content projected into the component');
+            this.initializeProjectedContent();
+        }
+
+5. ngAfterContentChecked:
+    - ngAfterContentChecked() is utilized to perform checks after 
+        Angular checks the content projected into the component's view.
+    Example:
+        ngAfterContentChecked() {
+            console.log('ngAfterContentChecked: Projected content checked');
+            this.updateProjectedContent();
+        }
+
+6. ngAfterViewInit:
+    - ngAfterViewInit() is employed to execute logic after 
+        Angular initializes the component's views and child views.
+    Example:
+        ngAfterViewInit() {
+            console.log('ngAfterViewInit: Component view initialized');
+            this.initializeView();
+        }
+
+7. ngAfterViewChecked:
+    - ngAfterViewChecked() is utilized to execute logic after
+         Angular checks the component's views and child views for changes.
+    Example:
+        ngAfterViewChecked() {
+            console.log('ngAfterViewChecked: Component view checked');
+            this.updateView();
+        }
+
+8. ngOnDestroy:
+    - Called just before Angular destroys the component.
+    - Used for cleanup tasks, such as unsubscribing from observables or detaching event handlers to prevent memory leaks.
+    Example:
+        ngOnDestroy() {
+            console.log('ngOnDestroy: Component is about to be destroyed');
+            this.cleanupResources();
+        }
+
+-------------------------------------------------------------------------------
+
+NgModule
+    - declarations
+    - imports
+    - providers
+    - bootstrap
+    - exports
+-------------------------------------------------------------------------------
+
+@Input() and @Output()
+    - @Input() is used to pass data from a parent component to a child component.
+    - @Output() is used to emit events from a child component to a parent component.
+    for example
+    parent component template
+        <app-child [isChecked]="parentIsChecked" (statusChange)="onStatusChange($event)"></app-child>
+        <app-identification-tab 
+            (buttonClicked)="transmitEvent($event);"><app-identification-tab>
+    parent component class
+        parentIsChecked: boolean = false;
+    
+        onStatusChange(newStatus: boolean) {
+            this.parentIsChecked = newStatus;
+        }
+        transmitEvent(event: any) {
+            if (event.action === 'logout') {
+                this.handleLogout();
+            }
+        }
+
+    child component class
+        @Input() isChecked: boolean = false;
+        
+        @Output() buttonClicked = new EventEmitter();
+        logout() {
+            this.buttonClicked.emit({action: 'logout'});
+        }
+
+    child component template
+        <button class="btn btn-primary" (click)="logout()"> Log out </button>
+        <ng-container *ngIf="isChecked; else checkmarkBlock">
+            <span class="crossmark">❌</span>
+        </ng-container>
+---------------------------------------------------------------------------
+Text Interpolation - {{ }}
+Property Binding - [property]="expression"
+(Template Statement) Event Binding - (event)="handler($event)"
+Two-way Binding - [(ngModel)]="property"
+Pipes - {{ value | pipeName:arg1:arg2 }}
+------------------------------------------------------------------------------
+Directives
+    - Structural Directives: Change the DOM layout by adding or removing elements.
+        *ngIf, *ngFor, *ngSwitch
+        <div *ngIf="isVisible">Content to show or hide</div>
+        <div *ngFor="let item of items">{{ item }}</div>
+    - Attribute Directives: Change the appearance or behavior of an element, component, or another directive.
+        ngClass, ngStyle, custom directives, [(ngModel)] = "property"
+------------------------------------------------------------------------------
+Decorators
+    class decorators and property decorators
+    - Class Decorators:
+        - import { Component, Directive, Pipe, Injectable } from '@angular/core';
+        - @Component: Defines a component and its metadata.
+        - @Directive: Defines a directive and its metadata.
+        - @Pipe: Defines a custom pipe and its metadata.
+        - @Injectable: Marks a class as available to be provided and injected as a dependency.
+    - Class Field Decorators:
+        - Property Decorators:
+            - @Input: Marks a property as an input property that can receive data from a parent component.
+            - @Output: Marks a property as an output property that can emit events to a parent component.
+        - Method Decorators:
+            - @HostClick: Listens to click events on the host element of the directive or component.
+            - @HostListener: Listens to events on the host element of the directive or component.
+            - @HostBinding: Binds a property of the host element to a property in the directive or component.
+        - Parameter Decorators:
+            - @Inject: Specifies a custom provider to be used when injecting a dependency.
+            - @Optional: Marks a parameter as optional when injecting a dependency.
+            - @NgModule: Defines an Angular module and its metadata.
+
+@viewchild()
+    - A decorator that allows you to access a child component, directive, or DOM element from a parent component class.
+    - Used to interact with the child component or element directly, enabling you to call its methods or access its properties.
+    Example:
+        import { Component, ViewChild, AfterViewInit } from '@angular/core';
+        import { ChildComponent } from './child.component';
+
+        @Component({
+            selector: 'app-parent',
+            template: `
+            <app-child (buttonClicked)="handleChildEvent($event)"></app-child>
+            <button (click)="callChildMethod()">Call Child Method</button>
+            `
+        })
+        export class ParentComponent implements AfterViewInit {
+            @ViewChild(ChildComponent) childComponent!: ChildComponent;
+
+            ngAfterViewInit() {
+                // You can access the child component here
+                console.log(this.childComponent);
+            }
+
+            callChildMethod() {
+                this.childComponent.someMethod();
+            }
+
+            handleChildEvent(event: any) {
+                console.log('Event from child:', event);
+            }
+        }
+
+        @ViewChild(ChildComponent) childComponent!: ChildComponent;
+        - The exclamation mark (!) is a TypeScript non-null assertion operator, indicating that childComponent will be initialized by Angular after the view is initialized.
+        - This is necessary because the child component is not available until after the view has been fully
+
+
+------------------------------------------------------------------------------
+Angular Forms 
+-----------------
+    - Template-driven Forms: Simpler to use, suitable for simple forms.
+        - Use ngModel for two-way data binding.
+        - Example:
+            <form #myForm="ngForm" (ngSubmit)="onSubmit(myForm)">
+                <input name="username" [(ngModel)]="username" required>
+                <button type="submit">Submit</button>
+            </form>
+    - Reactive Forms: More powerful and flexible, suitable for complex forms.
+        - Use FormControl, FormGroup, and FormBuilder for form control and validation.
+        - Example:
+            import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+            const fb = new FormBuilder();
+            this.myForm = fb.group({
+                username: ['', Validators.required]
+            });
+            <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+                <input formControlName="username">
+                <button type="submit">Submit</button>
+            </form>
+------------------------------------------------------------------------------
+Angular Pipes
+    - Pipes are used to transform data in templates.
+    - Built-in Pipes: DatePipe, UpperCasePipe, LowerCasePipe, CurrencyPipe, DecimalPipe, PercentPipe, JsonPipe, SlicePipe
+        Example:
+            <p>{{ currentDate | date:'fullDate' }}</p>
+            <p>{{ amount | currency:'USD' }}</p>
+            <p>{{ text | uppercase }}</p>
+            <p>{{ value | exponentialStrength:2 }}</p>
+            <p>{{ jsonData | json }}</p>
+            <p>{{ arrayData | slice:1:3 }}</p>
+            <p>{{ value | percent }}</p>
+    - Custom Pipes: You can create your own pipes by implementing the PipeTransform interface.
+        pure and impure pipes
+        1. Pure Pipes: These pipes are only executed when the input data changes. They
+            are more efficient and are the default type of pipe in Angular.
+            primitive data types (string, number, boolean) and immutable objects (arrays, objects).
+        2. Impure Pipes: These pipes are executed on every change detection cycle,
+            regardless of whether the input data has changed. They are less efficient.
+            mutable objects (arrays, objects) and when the input data changes frequently.
+        Example:
+            import { Pipe, PipeTransform } from '@angular/core';
+            @Pipe({ name: 'exponentialStrength' })
+            export class ExponentialStrengthPipe implements PipeTransform {
+                transform(value: number, exponent: string): number {
+                    let exp = parseFloat(exponent);
+                    return Math.pow(value, exp);
+                }
+            }
+---------------------------------------------------------------
+services and dependency injection
+    - Services are singleton objects that encapsulate business logic and can be shared across components.
+    - Dependency Injection (DI) is a design pattern used to implement IoC (Inversion of Control), allowing a class to receive its dependencies from an external source rather than creating them itself.
+    - Angular provides a built-in DI framework that makes it easy to manage service instances.
+    - To create a service, use the @Injectable decorator:
+        import { Injectable } from '@angular/core';
+        @Injectable({
+            providedIn: 'root'
+        })
+        export class MyService {
+            constructor() { }
+        }
+    - To inject a service into a component, add it to the constructor:
+        import { Component } from '@angular/core';
+        import { MyService } from './my.service';
+        @Component({
+            selector: 'app-my-component',
+            templateUrl: './my-component.component.html'
+        })
+        export class MyComponent {
+            constructor(private myService: MyService) { }
+        }
+------------------------------------------------------------------------------
+Routing
+    - Angular's RouterModule allows you to define routes and navigate between different views in your application.
+    - To set up routing, import RouterModule and define routes in your app.module.ts:
+        import { NgModule } from '@angular/core';
+        import { RouterModule, Routes } from '@angular/router';
+        import { HomeComponent } from './home/home.component';
+        const routes: Routes = [
+            { path: '', component: HomeComponent }
+        ];
+        @NgModule({
+            imports: [RouterModule.forRoot(routes)],
+            exports: [RouterModule]
+        })
+        export class AppRoutingModule { }
+<router-outlet></router-outlet>
+    - Use the routerLink directive to navigate between routes:
+        <a routerLink="/">Home</a>
+    - Use the Router service for programmatic navigation:
+        import { Router } from '@angular/router';
+        constructor(private router: Router) { }
+        this.router.navigate(['/']);
+-------------------------------------------------------------------------------

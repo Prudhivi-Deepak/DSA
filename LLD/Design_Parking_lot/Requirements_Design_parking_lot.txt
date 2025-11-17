@@ -1,0 +1,11 @@
+Entities
+    1. ParkingArea/slot
+    2. EntryTicket
+    3. ExitPayment
+
+Flow
+    1. Entry Flow
+    2. Exit Flow
+
+
+

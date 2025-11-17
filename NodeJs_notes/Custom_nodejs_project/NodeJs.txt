@@ -1,0 +1,59 @@
+Event loop ==> keeps on running as long as event listeners are present
+process.exit() ==> to exit the event loop but no one wants to do that because it's no longer accessible to people
+
+response
+res.setHeader('Content-Type', 'text/html'); ==> to set the header of the response
+ - it says the type of content that is being sent to the client is html
+
+res.write() ==> to write data to the response body
+    - it can be called multiple times to send multiple chunks of data
+    - error can occur if res.write() is called after res.end()
+res.end() ==> to end the response
+    - it tells the server that all of the response headers and body have been sent
+------------------------------------------------------------------------------------------
+
+streams & buffers
+consider a big file being uploaded to a server
+- if the server tries to read the entire file into memory at once, it can lead to high memory usage and potential crashes
+- instead, the server can read the file in smaller chunks using streams
+- streams allow data to be processed piece by piece, reducing memory consumption and improving performance
+buffer is like a bus stop
+ - hold multiple chunks of data temporarily before they are processed/released or sent to their destination
+
+
+req.on() ==> on allows us to listen to different events like data event /(close, end, error, readable, data events)
+    - data event ==> triggered when a new chunk of data is available to read from the stream
+    - end event ==> triggered when there is no more data to read from the stream
+    - error event ==> triggered when an error occurs while reading from the stream
+    - readable event ==> triggered when the stream is ready to be read
+    - close event ==> triggered when the stream is closed
+req.on('data', (chunk) => {
+    // arrow function to process each chunk of data as it arrives
+});
+
+when ever stream is end we can use end event
+req.on('end', () => {
+    // we can conver all the chunks stored in array body to buffer using Buffer.concat() 
+    // then buffer to string using toString() 
+    
+    // code inside this arrow function in this event listener will do it eventually,
+    // so will get error if we send response here and also outside the event listener
+    
+    res.end() 
+    // this shows error 
+    // or this works fine if we don't have an return outside the listeners because function ends 
+    // with no return and eventually this event comes to end and returns this res.end()
+    // or just return the event listener function itself to make it work what ever (return req.on('end', () => {...}))
+
+    writeFileSync('user_data.txt', parsedData); 
+    // This blocks the code execution until the file is written completely.
+    // so, it's better to use asynchronous version writeFile() with a callback (function that executes when the file is written) or promise
+    // if you want to return the response after writing the file then in the call back function return the res.end()
+
+
+});
+res.end() // this works
+return res.end() works same as res.end() here
+Node Js has some registry having all listerners and call that function after parsing
+------------------------------------------------------------------------------------------
+

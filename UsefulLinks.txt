@@ -55,3 +55,34 @@ Spring Boot A2Z preparation - https://lnkd.in/gbfZU8hw
 System Design Roadmap + Resources - https://lnkd.in/gQaSQupu
 
 https://www.linkedin.com/posts/ashishmisal_companies-hiring-100-remote-a-curated-list-activity-7339866221137354753-DVN-?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC_7GfcBLQmzQJSllyfiyeNjFeowRQNkCEQ
+
+𝐁𝐞𝐬𝐭 𝐅𝐫𝐞𝐞 51 hour 𝐜𝐨𝐮𝐫𝐬𝐞 𝐭𝐨 𝐌𝐚𝐬𝐭𝐞𝐫 𝐃𝐏 𝐟𝐨𝐫 𝐅𝐀𝐀𝐍𝐆𝐌 𝐎𝐀/𝐈𝐧𝐭𝐞𝐫𝐯𝐢𝐞𝐰 + 𝐂𝐏 - https://lnkd.in/dN6nnxzr
+
+𝐃𝐨 𝐭𝐡𝐞 𝐃𝐏 𝐏𝐚𝐫𝐭 𝐨𝐟 𝐭𝐡𝐢𝐬 𝐟𝐫𝐞𝐞 𝐖𝐚𝐫𝐦𝐮𝐩 𝐜𝐨𝐮𝐫𝐬𝐞 𝐟𝐨𝐫 𝐃𝐒𝐀 + 𝐎𝐀 + 𝐂𝐏 - https://videsiqna.in 
+
+Amazon SDE-1 OA Video Solution - https://lnkd.in/ddE5VkQb
+
+ 5 𝐀𝐝𝐯𝐚𝐧𝐜𝐞𝐝 𝐖𝐚𝐲𝐬 𝐭𝐨 𝐌𝐚𝐬𝐭𝐞𝐫 𝐃𝐲𝐧𝐚𝐦𝐢𝐜 𝐏𝐫𝐨𝐠𝐫𝐚𝐦𝐦𝐢𝐧𝐠 (𝐃𝐏) 𝐢𝐧 𝐃𝐒𝐀 + 𝐎𝐀 + 𝐂𝐏
+
+1️⃣ 𝐁𝐮𝐢𝐥𝐝 𝐒𝐨𝐥𝐢𝐝 𝐅𝐨𝐮𝐧𝐝𝐚𝐭𝐢𝐨𝐧 🧩 → Start with 1D & 2D DP: Fibonacci, Knapsack, Coin Change, LIS. Learn to define states & transitions clearly.
+
+2️⃣ 𝐄𝐱𝐩𝐥𝐨𝐫𝐞 𝐂𝐨𝐦𝐦𝐨𝐧 𝐏𝐚𝐭𝐭𝐞𝐫𝐧𝐬 🔑 →
+Subarray DP (Kadane, Max-Subarray variants)
+Partition DP (Matrix Chain Multiplication, Palindrome Partitioning)
+DP on Subsequences (LCS, Subset Sum, Edit Distance)
+DP with Strings (Palindrome DP, Matching, Compression)
+
+3️⃣ 𝐃𝐏 𝐨𝐧 𝐒𝐩𝐞𝐜𝐢𝐚𝐥 𝐒𝐭𝐫𝐮𝐜𝐭𝐮𝐫𝐞𝐬 🌲 →
+DP on Trees (rerooting, subtree contributions)
+Digit DP (count numbers with properties)
+Bitmask DP (Traveling Salesman, subset optimizations)
+DP on Graphs (paths, longest DAG paths, probabilities)
+
+4️⃣ 𝐋𝐞𝐚𝐫𝐧 𝐎𝐩𝐭𝐢𝐦𝐢𝐳𝐚𝐭𝐢𝐨𝐧 𝐓𝐞𝐜𝐡𝐧𝐢𝐪𝐮𝐞𝐬 ⚡ →
+Space Optimization (2D → 1D)
+Divide & Conquer DP
+Knuth Optimization
+Convex Hull Trick / Li Chao Tree
+Sqrt / Segment Tree optimizations on DP
+
+5️⃣ 𝐏𝐫𝐚𝐜𝐭𝐢𝐜𝐞 & 𝐁𝐮𝐢𝐥𝐝 𝐈𝐧𝐭𝐮𝐢𝐭𝐢𝐨𝐧 💻 → Solve problems across Codeforces, AtCoder, CodeChef, Leetcode. Visualize recursive breakdowns, then refine into iterative DP. Over time, you’ll spot patterns instantly.

@@ -1,0 +1,29 @@
+div {
+    margin: 1% 13% 1% 13%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30%; /* Ensure the div has a fixed height */
+    background: linear-gradient(to bottom, rgb(162, 5, 162), rgb(247, 144, 247));
+    border-radius: 10px;
+}
+
+div > span > h1{
+    margin-top: 10%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+div > span > p {
+    color: white;
+    text-align: center;
+    font-size: larger;
+    border-color: black;
+    border-radius: 5px;
+    height: 100px;
+    width: 100%; /* Optional: make p fill the div */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

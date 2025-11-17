@@ -1,0 +1,12 @@
+Outline components, data flow, and how you’d minimize driver wait times
+
+1. Entities
+
+2. Data Flow:
+    - User request for a ride from source to destination on User UI
+    - Drivers (based on different paramenter) get the ride request made by user - (we use various ride-matching alogorithms here)
+        - Driver can accept or reject the user's ride request
+    - Driver accept's the ride request
+        - create a ride from source to destination with user and driver details
+
+3. Minimizing Driver Wait Times:

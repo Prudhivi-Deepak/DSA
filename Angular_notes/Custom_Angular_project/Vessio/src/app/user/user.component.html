@@ -1,0 +1,15 @@
+<!-- <span>Main Menu</span> -->
+<ul>
+    <li>
+        <button (click)="onSelecteduser()">
+        <span>
+            <!-- <img src="{{selectedUser.avatar}}" /> -->
+            <img [src]="selectedUser().avatar" />
+            <p>{{selectedUser().name}}</p>
+            <!-- <p>{{getUserIdAndName()}}</p> -->
+             <p>{{UserIdandName()}}</p>
+        </span>
+        </button>
+    </li>
+</ul>
+
