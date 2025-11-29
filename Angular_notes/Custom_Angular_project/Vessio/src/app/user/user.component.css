@@ -15,7 +15,7 @@ ul > li > button > span > p{
 }
 
 ul > li > button{
-    width: 15%;
+    width: 100%;
     background-color: rgb(243, 196, 249);
     border-radius: 100px;
     align-items: start;
@@ -24,6 +24,10 @@ ul > li > button{
 ul > li > button:hover {
     background-color: rgb(200, 143, 231);
     cursor: pointer;
+}
+
+ul > li > button.active {
+    background-color: rgb(157, 90, 183);
 }
 
 ul > li > button > span > img{

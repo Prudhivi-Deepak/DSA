@@ -1,3 +1,26 @@
 main{
     margin: 1% 13% 1% 13%;
 }
+
+.users-container{
+
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* gap: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    color: white;
+    padding: 5px; */
+    flex: 0 0 30%;
+}
+
+.task-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(175, 116, 175);
+    color: white;
+    flex: 0 0 70%;
+}

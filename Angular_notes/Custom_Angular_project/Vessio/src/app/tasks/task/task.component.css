@@ -1,0 +1,21 @@
+.task-container{
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid rgb(152, 116, 175);
+    color: white;
+}
+
+.actions{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px;
+    padding-bottom: 15px;
+    padding-right: 15px;
+    background: linear-gradient(135deg, #430d85 0%, #764ba2 100%);
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    color: white;
+}

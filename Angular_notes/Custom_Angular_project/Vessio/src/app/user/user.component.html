@@ -1,13 +1,20 @@
 <!-- <span>Main Menu</span> -->
 <ul>
     <li>
-        <button (click)="onSelecteduser()">
+        <button [class.active]="isUserSelected" (click)="onSelecteduser()">
         <span>
             <!-- <img src="{{selectedUser.avatar}}" /> -->
-            <img [src]="selectedUser().avatar" />
-            <p>{{selectedUser().name}}</p>
+            <!-- <img [src]="selectedUser().avatar" /> -->
+             <!-- <img [src]="avatar"/> -->
+              <!-- <img [src]="user?.avatar" /> -->
+              <img [src]="user.avatar" />
+            <!-- <p>{{selectedUser().name}}</p> -->
             <!-- <p>{{getUserIdAndName()}}</p> -->
-             <p>{{UserIdandName()}}</p>
+             <!-- <p>{{name}}</p> -->
+             <!-- <p>{{UserIdAndName}}</p> -->
+              <!-- <p>{{user?.name}}</p> -->
+              <p>{{user.name}}</p>
+              <p>{{UserIdAndName}}</p>
         </span>
         </button>
     </li>

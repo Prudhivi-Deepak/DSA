@@ -1,10 +1,34 @@
 <app-header></app-header>
 
 <main>
-  <app-user></app-user>
-  <ul>
-    <li>
+  <div style="display: flex;">
+    <div class="users-container">
+    <!-- @for(user of users; track user.id){ -->
+      <app-user  *ngFor="let user of users" [isUserSelected]="user.id == selectedUserId"  [user]="user" (userSelected)="OnUserSelected($event)"></app-user>
+    <!-- } -->
+    <!-- <app-user [user]="users[0]" [id]="users[0].id" [avatar]="users[0].avatar" [name]="users[0].name" (userSelected)="OnUserSelected($event)"></app-user> -->
+    <!-- <app-user [user]="users[1]" [id]="users[1].id" [avatar]="users[1].avatar" [name]="users[1].name" (userSelected)="OnUserSelected($event)"></app-user>
+      <app-user [user]="users[2]" [id]="users[2].id" [avatar]="users[2].avatar" [name]="users[2].name" (userSelected)="OnUserSelected($event)"></app-user>
+      <app-user [user]="users[3]" [id]="users[3].id" [avatar]="users[3].avatar" [name]="users[3].name" (userSelected)="OnUserSelected($event)"></app-user>
+      <app-user [user]="users[4]" [id]="users[4].id" [avatar]="users[4].avatar" [name]="users[4].name" (userSelected)="OnUserSelected($event)"></app-user> -->
+  </div>
+  <!-- <ul>
+      <li>
       option1
-    </li>
-  </ul>
+      </li>
+    </ul> -->
+  <!-- @if(selectedUserId){ -->
+  <div class="task-container" *ngIf="selectedUserId; else fallback">
+    <app-tasks [selectedUserId]="selectedUserId"></app-tasks>
+  </div>
+  <!-- } -->
+  <!-- @else{ -->
+  <ng-template #fallback>
+    <div class="task-container">
+      <p>Please select a user to see their tasks.</p>
+    </div>
+  </ng-template>
+  <!-- } -->
+  </div>
+
 </main>

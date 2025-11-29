@@ -1,0 +1,20 @@
+@if(isAddingNewTask){
+    <app-new-task [selectedUserId]="selectedUserId" (newTaskCancelEventEmitter)="OnClickCancelButton()" (newCloseTaskEventEmitter)="OnClickAddTask()" ></app-new-task>
+}
+<section>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2><img class="profile-pic" [src]="users[userIDIndex].avatar"/>{{users[userIDIndex].name}}'s Tasks</h2>
+            <button class="add-task-button" (click)="onClickAddTasks()" >Add Task</button>
+        </div>
+    </header>
+    <div class="userdetails-container">
+        <p>User Id : {{users[userIDIndex].id}}</p>
+        <p>User Name : {{users[userIDIndex].name}}</p>
+    </div>
+
+    @for(task of selectedUserTasks; track task.id){
+        <!-- <app-task [task]="task" (taskCompleted)="onTaskCompleted($event)"></app-task> -->
+        <app-task [task]="task"></app-task>
+    }
+</section>
