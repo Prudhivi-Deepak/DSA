@@ -28,33 +28,54 @@ const routeHandler = (req, res) => {
             console.log("chunk : ", chunk);
         });
 
-        return req.on('end', ()=>{
+        // return 
+        req.on('end', ()=>{
             const response = Buffer.concat(body).toString();
             console.log("end : ",response);
             // fs.writeFileSync('./user_data.txt', response.split("=")[1]);
-            fs.writeFile('/user', response.split("=")[1], ()=>{
-                console.log("File written successfully");
-                res.statusCode = 302; // redirect status code
-                res.setHeader('Location', '/');
-                return res.end();
+            fs.writeFile('./user.txt', response.split("=")[1], ()=>{
+                // without return req.on('end') 
+                // and we also have res.end() outside req.on('end')
+                // ---> outer res.end() get executed first / app crashes
+                // else we have only below code --> it will work fine (after file write only redirect)
+
+                // keeps return res.end() --> writes file then redirects
+
+                // console.log("File written successfully");
+                // res.statusCode = 302; // redirect status code
+                // res.setHeader('Location', '/');
+                // return res.end();
             })
+            // without return req.on('end') 
+            // and we also have res.end() outside req.on('end')
+            // ---> outer res.end() get executed first / app crashes
+            // else we have only below code --> it will work fine (after file write only redirect)
+
+            // keeps return res.end() --> redirects
+
             // console.log("After file write");
             // res.statusCode = 302; // redirect status code
             // res.setHeader('Location', '/');
             // return res.end();
         });
+        // without return req.on('end') 
+        // and we also have res.end() outside req.on('end')
+        // ---> got redirected
+        // else we have only below code --> it will work fine (after file write only redirect)
+
+        // keeps return res.end() --> doesn't return anything
+        
         // res.statusCode = 302; // redirect status code
         // res.setHeader('Location', '/');
         // return res.end();
     }
-        
 
-    res.setHeader('Content-Type', 'text/html');
-    res.write('<html>');
-    res.write('<head><title>My First Page</title></head>');
-    res.write('<h1>Welcome to Vessio</h1>');
-    res.write('</html>');
-    res.end();
+    // res.setHeader('Content-Type', 'text/html');
+    // res.write('<html>');
+    // res.write('<head><title>My First Page</title></head>');
+    // res.write('<h1>Welcome to Vessio</h1>');
+    // res.write('</html>');
+    // res.end();
 }
 
 // module.exports = routeHandler;

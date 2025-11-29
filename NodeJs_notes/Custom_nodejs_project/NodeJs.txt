@@ -56,4 +56,70 @@ res.end() // this works
 return res.end() works same as res.end() here
 Node Js has some registry having all listerners and call that function after parsing
 ------------------------------------------------------------------------------------------
+ 
+vanilla Nodejs
+Adonis JS
+koa
+sails JS
+express
 
+------------------------------------------------------------------------------------------
+Express Js
+
+It's all about middleware functions
+A middleware function is a function that has access to the request object (req), 
+                                                    the response object (res), and 
+                                                    the next middleware function 
+                                    in the application's request-response cycle.
+multiple middleware functions can be chained together to handle a request instead of a huge function doing everything
+
+const express = require('express'); //exports a function
+const app = express(); //app is a valid request handler
+createseerver(app);//pass app to server
+
+app.use() ==> allows us to add new middleware functions to the application
+    - it takes a middleware function as an argument
+    - the middleware function can perform any task, such as logging, authentication, parsing request bodies, etc.
+    - after performing its task, the middleware function can either send a response to the client
+         or call the next() function to pass control to the next middleware function in the chain
+    -works fine with bothe GET and POST request
+
+//can't rename req, res, next
+app.use((req, res, next) => {
+    console.log('Middleware 1: Logging request details');
+    console.log(`Request Method: ${req.method}, Request URL: ${req.url}`);
+    next(); // Pass control to the next middleware function
+});
+
+app.use((req, res, next) => {
+    console.log('Middleware 2: Authenticating user');
+    res.send('Response from send'); // Utility function send response to the client by automatically setting headers and status codes
+});
+
+// ---------------------------------------------------------------
+const server = http.createServer(app);//pass app to server
+server.listen(3000)
+app.listen(3000); //shortcut to create server and listen on port 3000 --> instead of above 2 lines
+// ---------------------------------------------------------------
+
+res.send("") // sends the response to the client by automatically setting headers and status codes
+res.redirect('/'); //sets status code 302 and Location header
+------------------------------------------------------------------------------------------
+
+req.body ==> not able to parse rew automatically in express
+    - need to use middleware to parse the body of incoming requests
+    - use body-parser (sometimes comes pre-installed with express)
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+    - this middleware will parse the body of incoming requests with urlencoded payloads
+    - extended: false means that the values can be only strings or arrays
+    - if true, it can parse nested objects as well
+------------------------------------------------------------------------------------------
+
+app.get() ==> to handle GET requests to a specific route
+    - takes two arguments: the route path and a callback function
+
+app.post() ==> to handle POST requests to a specific route
+    - takes two arguments: the route path and a callback function
+---------------------------------------------------------------------------------------------
