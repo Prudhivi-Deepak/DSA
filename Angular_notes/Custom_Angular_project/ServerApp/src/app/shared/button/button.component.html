@@ -1,0 +1,19 @@
+<!-- <button>
+    <span>
+        {{buttonLabel()}}
+    </span>
+    <span class="icon">
+        {{buttonIcon()}}
+    </span>
+</button> -->
+
+<button>
+    <ng-content/>
+    <!-- <ng-content select=".icon"/> -->
+    <ng-content select="icon"/>
+    <!-- <ng-content select="icon"> -->
+        <!-- → -->
+    <!-- </ng-content>  -->
+
+
+</button>

@@ -1,0 +1,44 @@
+<!-- <div id="status"> -->
+<diV [class]="{
+    status: true,
+    'status-online':  currentStatus() === 'online',
+    'status-offline': currentStatus() === 'offline',
+    'status-unknown': currentStatus() === 'unknown',
+}" [style]="{
+        fontSize: '24px',
+        'font-size': '34px',
+    }" [style.backgroundColor]="{
+        online: 'lightgreen',
+        offline: 'lightcoral',
+        unknown: 'gray',
+    }[currentStatus()]">
+    @if (currentStatus() === 'online') {
+    <p>Servers are online</p>
+    <p>All systems are operational.</p>
+    } @else if (currentStatus() === 'offline') {
+    <p>Servers are offline</p>
+    <p>Functionality should be restored soon.</p>
+    } @else {
+    <p>Server status is unknown</p>
+    <p>Fetching server status failed.</p>
+    }
+</diV>
+<!-- </div> -->
+
+<div>
+    <ul>
+        <li>
+            <!-- <a href="https://angular.dev" appSafeLink eventfrom="my-app-angular">Angular Official Website</a> -->
+            <a href="https://angular.dev" appSafeLink="my-app-angular">Angular Official Website</a>
+        </li>
+        <li>
+            <a href="https://angular.io/docs" appSafeLink="my-app-angular">Angular Documentation</a>
+        </li>
+        <li>
+            <a href="https://angular.io/tutorial">Angular Tutorial</a>
+        </li>
+        <li>
+            <a href="https://www.google.com/search?q=angular">Google Search: Angular</a>
+        </li>
+    </ul>
+</div>
