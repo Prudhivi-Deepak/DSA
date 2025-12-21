@@ -1,0 +1,180 @@
+import { signal, effect, untracked, resource, Signal, linkedSignal   } from '@angular/core';
+
+
+Angular Signals
+===================================================================================================================================
+--------------------------------------------------------------------------------------
+Angular-Signals is a system that granularly tracks how and where your state is used throughout an application, 
+allowing the framework to optimize rendering updates, use signal function to hold a value and it's local state
+
+2 types of Signals:
+signal() - return type is **WritableSignal**
+
+1.writable Signals - we can update the signal values
+methods:
+    define signal with initial value (primitives or complex data structures)
+        const count = signal(0);
+
+    -set() : to set a new value to the signal
+        count.set(5);
+
+    -update() : to update the current value based on previous value
+        count.update(current => current + 1);
+--------------------------------------------------------------------------------------
+
+computed() - read-only because we derive the value from another signal
+
+2.readable Signals - we can only read the signal values
+methods:
+    define computed signal based on other signals
+        const doubleCount = computed(() => count() * 2);
+    when ever count updates --> doubleCount will automatically recalculate and cached value
+        doubleCount will not be calculated or recalculated until it's accessed 
+        and then 2nd time onwards it will return cached value until dependency(count) changes
+
+    computed signals dependencies are dynamic 
+        if showCount is false --> count() is never accessed (it's' never recomputes contionalCount again because count is not a dependency)
+
+        const showCount = signal(false);
+        const count = signal(0);
+
+        const conditionalCount = computed(() => {
+            if (showCount()) { 
+                return `The count is ${count()}.`;
+            } else {
+                return 'Nothing to see here!'; false
+            }
+        });
+
+Note : 
+1. we might also need Writable Signal that depend on other signals 
+    --> we use linkedSignal() for that
+
+    for example: shippingOptions signal with list of shipping methods
+    and selectedShippingOption signal that depends on shippingOptions signal
+
+    if shippingOptions changes --> selectedShippingOption should update accordingly 
+        we can't use computed because shippingOptions values changes not the reference itself
+
+            const shippingOptions = signal<ShippingMethod[]>([
+                { id: 0, name: 'Standard' },
+                { id: 1, name: 'Express' },
+                { id: 2, name: 'Next-Day' }
+            ]);
+            selectedOption = linkedSignal(() => this.shippingOptions()[0]); // works fine keeps selectedOption as first option evn though shippingOptions values change
+        
+        but if we want to retain the previously selected option if it's still available in new shippingOptions values
+        so we use linkedSignal() along with computation function to return the appropriate value
+
+        source : the signal it depends on
+        computation : function that defines how to compute the new value based on source signal changes
+            it accepts 2 parameters : new value of source signal and 
+                previous value of linked signal 
+                    having 2 Key Values properties
+                        parameter.source - previous value of source
+                        previous.value
+                                                            inputType       outputType
+            const selectedShippingOption = linkedSignal<ShippingMethod[], shippingMethod>(
+                {
+                    source: this.shippingOptions,
+                    computation : (newOptions, previous)=>{
+                            //- If the previous selected option is still available, keep it selected.
+                            if (previous && newOptions.includes(previous?.value.id)) {
+                                return previous;
+                            }
+                            //- Otherwise, select the first available option.
+                            return newOptions[0];
+                        },
+                }
+            );
+
+2. signal() equality functions 
+    if equal function returns true --> signal value is considered unchanged --> no updates triggered
+        import _ from 'lodash';
+        const data = signal(['test'], {equal: _.isEqual});
+        data.set(['test']);
+    By default, signals use referential equality (Object.is() comparison)
+
+    const activeUser = signal({id: 123, name: 'Morgan', isAdmin: true});
+    const activeUserEditCopy = linkedSignal(() => activeUser(), {
+            // Consider the user as the same if it's the same `id`.
+            equal: (a, b) => a.id === b.id,
+        });
+    
+    // Or, if separating `source` and `computation`  
+    const activeUserEditCopy = linkedSignal({
+        source: activeUser,
+        computation: user => user,
+        equal: (a, b) => a.id === b.id,
+    });
+
+3. we might also need Signal API's deal with async data 
+    --> we can use (!experimental) Resource (allows us to manage async data with Signals, still accessing the value synchronously)
+    --> most common use case is fetching data from server
+
+    Resource has a 'value' signal that contains the results of the loader.
+
+    const userResource = resource(
+        {   
+            //- params recomputes when userId signal changes
+            params: ()=>({id: userId()}), //userId is signal
+            loader: ({params})=> fetchUser(params), //async loader function that accepts single parameter (ResourceLoaderParams ) to fetch user data
+            //- loader runs erveytime params change
+        }
+    )
+
+    The 'ResourceLoaderParams' object contains three properties: params, previous, and signal.
+        params: The value of the resource's params computation.
+        previous: An object with a status property, containing the previous 'ResourceStatus'
+        abortSignal: A Signal that can be used to track when the loader is re-running.
+
+        If the params computation returns undefined, the loader function does not run and the resource status becomes 'idle'.
+
+    const firstName = computed(() => {
+        if(userResource.hasValue()){
+            return userResource.value().firstName;
+        }
+        return 'Guest';
+    });
+
+
+
+4. sometime we are in a situation where we need to react on signal changes on non-reactive apis.
+    --> we can use effect() or afterRenderEffect() for that
+
+    if-there is any change in dependency(either count / bark / both) --> effect will re-run
+    
+    effect(() => {
+        console.log(`Count changed to ${count()} and Double Count is ${bark()}`); **here --> it tracks both count and bark as dependencies**
+        console.log(`Count changed to ${count()} and Double Count is ${untracked(bark())}`); **here --> it tracks only count as dependency**
+    });
+    untracked is also useful when an effect needs to invoke some external code which shouldn't be treated as a dependency:
+    
+    effect(() => {
+        const user = currentUser();
+        untracked(() => {
+            //- If the `loggingService` reads signals, they won't be counted as dependencies of this effect.
+            this.loggingService.log(`User set to ${user}`);
+        });
+    });
+
+5. OnPush components with Signals
+    --> if we use signal() in OnPush components
+        +Angular automatically marks the component for check when a signal() it depends on changes.
+
+6. we will learn more about RxJS interop with Angular Signals in later sections
+
+other methods for signal()
+
+1. isSignal() : to check if a value is a signal
+    isSignal(value); //signal() -> true
+
+2. isWritableSignal() : to check if a signal is writable
+    isWritableSignal(value); //for computed- -> false
+--------------------------------------------------------------------------------------
+
+
+
+
+
+
