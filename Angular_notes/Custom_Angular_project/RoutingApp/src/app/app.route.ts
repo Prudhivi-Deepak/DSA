@@ -1,11 +1,15 @@
-import { provideRouter, withComponentInputBinding, CanMatchFn, Router, RedirectCommand, mapToCanDeactivate } from '@angular/router';
+import { provideRouter, withComponentInputBinding, CanMatchFn, Router, RedirectCommand, mapToCanDeactivate, ResolveFn } from '@angular/router';
 import { Component, inject } from '@angular/core';
 import { NoTaskComponent } from './tasks/no-task/no-task.component';
-import { resolverFunction, resolverFunctionForTitle, UserTasksComponent } from './users/user-tasks/user-tasks.component';
-import { resolveUserTasks, TasksComponent } from './tasks/tasks.component';
-import { canLeavePage, NewTaskComponent } from './tasks/new-task/new-task.component';
-import { Title } from '@angular/platform-browser';
+import { resolverFunction, UserTasksComponent } from './users/user-tasks/user-tasks.component';
+// import { resolveUserTasks, TasksComponent } from './tasks/tasks.component';
+// import { canLeavePage, NewTaskComponent } from './tasks/new-task/new-task.component';
+// import { Title } from '@angular/platform-browser';
 import { NotFoundComponent } from './not-found/not-found.component';
+// import { Task } from './tasks/task/task.model';
+// import { TasksService } from './tasks/tasks.service';
+// import { userRoutes } from './users/users.route';
+
 
 const dummyCanMatchGuard: CanMatchFn = (route, segments) => {
     const router = inject(Router);
@@ -29,21 +33,8 @@ export const routes = [
     // }
     {
         path: 'users/:userId', component: UserTasksComponent,
-        children: [
-            {
-                path: 'tasks', component: TasksComponent,
-                // runGuardsAndResolvers: 'paramsOrQueryParamsChange',
-                runGuardsAndResolvers: 'always' as const,
-                resolve: {
-                    userTasks: resolveUserTasks,
-                },
-                title: resolverFunctionForTitle
-            },
-            {
-                path: 'tasks/new', component: NewTaskComponent,
-                canDeactivate: [canLeavePage]
-            }
-        ],
+        // children: userRoutes,
+        loadChildren: () => import('./users/users.route').then(m => m.userRoutes),
         data: {
             message: 'User Tasks Page'
         },
