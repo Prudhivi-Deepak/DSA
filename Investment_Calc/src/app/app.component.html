@@ -1,0 +1,15 @@
+<div style="font-family: Arial, sans-serif; background-color: black; color: white; min-height: 100vh; margin: 0;">
+  <header style="background-color: black; text-align: center; ">
+    <img src="./public/investment-calculator-logo.png" alt="Investment Calculator Logo" style="max-width: 150px;" />
+    <h1 style="color: white; margin: 0;">Investment Calculator</h1>
+  </header>
+
+  <section style="background-color: black; min-height: 100vh;">
+    <main style="background-color: black; ">
+      <!-- <app-investment-form (calculateEventEmitter)="onCalculateInvestmentResults($event)"></app-investment-form> -->
+      <app-investment-form></app-investment-form>
+      <!-- @if(investmentResults()){<app-investment-result [investmentData]="investmentResults()"></app-investment-result>} -->
+      <app-investment-result></app-investment-result>
+    </main>
+  </section>
+</div>

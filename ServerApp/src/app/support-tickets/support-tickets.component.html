@@ -1,0 +1,20 @@
+<div>
+    <ul>
+        @for(ticket of tickets; track ticket.id) {
+
+        <app-ticket [data]="ticket" (close)="OnCloseSupportTicket($event)"></app-ticket> 
+        <!-- - {{$first}} {{$last}} {{$even}} {{$odd}} {{$count}} -->
+        <!-- <li>
+            <h3>{{ticket.title}}</h3>
+            <p>{{ticket.request}}</p>
+            <p>Status: {{ticket.status}}</p>
+        </li> -->
+        }@empty{
+        <p>No support tickets available.</p>
+        }
+    </ul>
+</div>
+
+<!-- <div id="new-ticket"> -->
+<app-new-ticket (ticketCreated)="onTicketCreated($event)"></app-new-ticket>
+<!-- </div> -->

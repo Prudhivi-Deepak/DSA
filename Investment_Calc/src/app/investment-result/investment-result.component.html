@@ -1,0 +1,22 @@
+@if(investmentData()!== undefined){
+<table class="table-container">
+    <thead class="table-header">
+        <tr>
+            <th>Year</th>
+            <th>Starting Balance</th>
+            <th>Annual Contribution</th>
+            <th>Interest Earned</th>
+            <th>End Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of investmentData()">
+            <td>{{data.year}}</td>
+            <td>{{data.valueEndOfYear - data.interest - data.annualInvestment | currency:"EUR" }}</td>
+            <td>{{data.annualInvestment | currency}}</td>
+            <td>{{data.interest | currency}}</td>
+            <td>{{data.valueEndOfYear | currency}}</td>
+        </tr>
+    </tbody>
+</table>
+}

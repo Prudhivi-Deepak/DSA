@@ -1,0 +1,10 @@
+<article>    
+    <div class="task-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p>{{task.title}}</p>
+            <p>{{task.time | date:'fullDate'}}</p>
+            <p>DESCRIPTION : {{task.description}}</p>
+        </div>
+        <button (click)="onComplete()" class="actions">Complete</button>
+    </div>
+</article>
