@@ -3,6 +3,7 @@
 const route = require('./routes'); 
 const bodyParser = require('body-parser');
 const express = require('express'); //exports a function
+const path = require('path');
 
 const adminRouter = require('./routes/admin');
 const usersRouter = require('./routes/users');
@@ -12,8 +13,15 @@ app.use(bodyParser.urlencoded({ extended: false })); //parsing url encoded data
 
 console.log("Route.someText ::  ", route.someText);
 
-app.use(adminRouter);
+app.use('/admin',adminRouter);
 app.use(usersRouter);
+
+// error - 404 page when user enters invalid url
+// request search from top to bottom, so if req comes here that means no valid route found
+app.use((req, res, next)=>{
+    // res.status(404).send('<h1>Page Not Found</h1>');
+    res.status(404).sendFile(path.join(__dirname, 'views', 'error404-page.html'));
+});
 
 // const server = http.createServer(route.handler);
 // create sever object using http (createServer() method) 
