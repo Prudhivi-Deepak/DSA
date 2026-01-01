@@ -123,3 +123,83 @@ app.get() ==> to handle GET requests to a specific route
 app.post() ==> to handle POST requests to a specific route
     - takes two arguments: the route path and a callback function
 ---------------------------------------------------------------------------------------------
+
+views ==> to store the templates for rendering dynamic HTML content
+    - by default, express looks for views in a folder named 'views' in the root directory of the project
+    - we can change the default views directory using 
+        app.set('views', 'path/to/views')
+
+static content ==> to serve static files like CSS, JS, images, etc.
+    - use express.static middleware to serve static files from a specific directory
+    - for example, to serve static files from a folder named 'public':
+        app.use(express.static(path.join(__dirname, 'public')));
+    - now, any file in the 'public' folder can be accessed directly via its URL
+        e.g., if there's a file 'public/css/styles.css', it can be accessed at '/css/styles.css'
+        in user.html we can use 
+            <link rel="stylesheet" href="/css/styles.css">
+
+----------------------------------------------------------------------------------------------
+templating engines ==> to generate dynamic HTML content
+    - allows us to create HTML templates with placeholders for dynamic data
+    - when rendering the template, the placeholders are replaced with actual data
+
+Pug ==> popular templating engine for Node.js
+    - uses indentation-based syntax to define HTML structure
+    - allows us to embed JavaScript code within the template to generate dynamic content
+To use Pug with Express:
+1. Install Pug using npm:
+   npm install pug
+2. Set Pug as the view engine in your Express app:
+   app.set('view engine', 'pug');
+3. Create Pug templates in the 'views' directory
+4. Use res.render() to render a Pug template and send it as a response:
+   res.render('template-name', { data: 'value' });
+    - 'template-name' is the name of the Pug template file (without the .pug extension)
+    - the second argument is an object containing data to be passed to the template
+
+if condition & for loop in template in pub
+example:
+    if users.length > 0
+        each user in users
+            h1 #{user.title}
+    else
+        p No users found.
+
+handlebars ==> another popular templating engine for Node.js
+    - uses double curly braces {{}} to denote placeholders for dynamic data
+    - allows us to create reusable templates with partials and helpers
+To use Handlebars with Express:
+1. Install Handlebars using npm:
+   npm install express-handlebars@3.0
+2. Set Handlebars as the view engine in your Express app:
+    const exphbs = require('express-handlebars');
+    app.engine('handlebars', exphbs());
+    app.set('view engine', 'handlebars');
+3. Create Handlebars templates in the 'views' directory
+4. Use res.render() to render a Handlebars template and send it as a response:
+   res.render('template-name', { data: 'value' });
+    - 'template-name' is the name of the Handlebars template file (without the .handlebars extension because we set engine to 'handlebars')
+    - the second argument is an object containing data to be passed to the template
+
+<!-- {{#if users.length > 0}} -- this will show error because {{}} -- accepts true or false values , does not evaluate logic here -- move logic to express node js -->
+
+if condition & for loop in template in handlebars
+example:
+    {{#if hasUsers}}
+        {{#each users}}
+            <h1>{{this.title}}</h1>
+        {{/each}}
+    {{else}}
+        <p>No users found.</p>
+    {{/if}}
+
+{{{ body }}} ==> to render unescaped HTML content in Handlebars
+    - by default, Handlebars escapes HTML content to prevent XSS attacks
+    - if we want to render raw HTML content, we can use triple curly braces {{{ }}} instead of double curly braces {{ }}
+main-layout.hbs ==> to define a common layout for all templates in Handlebars
+    - allows us to define a common structure for all pages in the application
+    - we can define a header, footer, and other common elements in the main layout
+    - individual templates can then be rendered within the main layout using {{{ body }}}
+
+------------------------------------------------------------------------------------------
+

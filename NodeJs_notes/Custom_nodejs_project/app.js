@@ -4,14 +4,18 @@ const route = require('./routes');
 const bodyParser = require('body-parser');
 const express = require('express'); //exports a function
 const path = require('path');
-
+const  exphbs  = require('express-handlebars');
 // const adminRouter = require('./routes/admin');
 const adminData = require('./routes/admin');
 const usersRouter = require('./routes/users');
 
 const app = express(); //app is a valid request handler
 
-app.set('view engine', 'pug');
+app.engine('hbs', exphbs(
+    {layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'hbs'}
+));
+app.set('view engine', 'hbs');
+// app.set('view engine', 'pug');
 app.set('views', 'views'); //default value, can be skipped
 
 app.use(bodyParser.urlencoded({ extended: false })); //parsing url encoded data

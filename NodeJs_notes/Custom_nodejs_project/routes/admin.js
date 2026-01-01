@@ -19,7 +19,9 @@ router.get('/add-user',(req, res, next)=>{
 
     // res.sendFile(path.join(__dirname, '..', 'views', 'add-user.html'));
     // res.sendFile(path.join(rootDir, 'views', 'add-user.html'));
-    res.render('add-user', {docTitle: 'Add User Page', path: 'adminpath'});
+    res.render('add-user', {docTitle: 'Add User Page', path: 'adminpath',
+        UsersCss: true, FormsCss: true, activeAddUser: true,
+    });
 });
 
 // app.use('/store-user',(req, res, next)=>{
