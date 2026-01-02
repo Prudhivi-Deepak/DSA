@@ -201,5 +201,36 @@ main-layout.hbs ==> to define a common layout for all templates in Handlebars
     - we can define a header, footer, and other common elements in the main layout
     - individual templates can then be rendered within the main layout using {{{ body }}}
 
+
+ejs ==> another popular templating engine for Node.js
+    - uses <% %> to denote JavaScript code and <%= %> to denote placeholders for dynamic data
+    - allows us to embed JavaScript code within the template to generate dynamic content
+To use EJS with Express:
+1. Install EJS using npm:
+   npm install ejs
+2. Set EJS as the view engine in your Express app:
+   app.set('view engine', 'ejs');
+3. Create EJS templates in the 'views' directory
+4. Use res.render() to render an EJS template and send it as a response:
+   res.render('template-name', { data: 'value' });
+    - 'template-name' is the name of the EJS template file (without the .ejs extension)
+    - the second argument is an object containing data to be passed to the template
+
+if condition & for loop in template in handlebars
+example:
+    <% if (users.length > 0) { %>
+        <% for (let user of users) { %>
+            <h1><%= user.title %></h1>
+        <% } %>
+    <% } else { %>
+        <p>No users found.</p>
+    <% } %>
+
+layouts in EJS
+    - allows us to define a common structure for all pages in the application
+    - we can define a header, footer, and other common elements in the layout
+    - individual templates can then be rendered within the layout using <%- include('template-name') %>
 ------------------------------------------------------------------------------------------
+
+
 
