@@ -232,5 +232,47 @@ layouts in EJS
     - individual templates can then be rendered within the layout using <%- include('template-name') %>
 ------------------------------------------------------------------------------------------
 
+https://expressjs.com/en/guide/routing.html
+Routing & advanced models
+
+
+Route Params & query Params
+-------------------------------------------------------------------------------
+
+router.get('/product/:productId, ... )  --> here productId is Route params
+
+... ==> in controller function we access the Route param using 
+        req.params.productId
+
+-------------------------------------------------------------------------------------
+<a href="/admin/edit-product/<%=productId%>?edit=true" class="btn"> Edit</a> ==> in html both route and query params at once
+router.get('/edit-product/:productId', adminController.getEditProduct)
+
+req.query.edit ==> query params access in controller
+req.params.productId ==> route params access in controller
+
+------------------------------------------------------------------------------------
+
+==> in html post request with body (input as hidden)
+
+<form action="/cart" method="POST"> 
+    <input type="hidden" name="productId" value="<%=product ? product.id : ''%>" />
+    <button class="btn" type="submit"> add to cart </button>
+</form>
+
+router.post('/cart, ...)
+
+...==> in controller
+req.body.productId
+
+----------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
