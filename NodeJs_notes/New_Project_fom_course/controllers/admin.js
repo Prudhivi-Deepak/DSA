@@ -18,8 +18,10 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price;
   const description = req.body.description;
   const product = new Product(null, title, imageUrl, description, price);
-  product.save();
-  res.redirect('/');
+  // product.save()
+  product.save().then(()=>{
+    res.redirect('/');
+  }).catch(err=>console.log(err));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -29,6 +31,24 @@ exports.getEditProduct = (req, res, next) => {
     return res.redirect('/');
   }
   const productId = req.params.productId;
+
+  // Product.findById().then(([product, fieldsData])=>{
+  //   if (!product) {
+  //     return res.redirect('/');
+  //   }
+
+  //   res.render('admin/edit-product', {
+  //     pageTitle: 'Edit Product',
+  //     path: '/admin/edit-product',
+  //     editing: editMode, // to differentiate between add and edit & we also include a query parameter in the url to set this value
+  //     product: product, //pass the product to the edit-product view to pre-fill the form
+  //     // formsCSS: true,
+  //     // productCSS: true,
+  //     // activeAddProduct: true
+  //   });
+    
+  // }).catch(err=>console.log(err));
+
   Product.findById(productId, product => {
     if (!product) {
       return res.redirect('/');

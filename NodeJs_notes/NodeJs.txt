@@ -267,6 +267,85 @@ req.body.productId
 
 ----------------------------------------------------------------------------------------------------------
 
+sql --> tables like users, products, orders
+Data schema --> definition of table (data types )
+Data relations --> 1 to 1, 1 to manya, many to many
+example : SELECT * FROM Users where age>20;
+
+NoSQL --> databse(shop) 
+tables --> collections 
+            --> records/documents(list of records)
+                --> different fields {}
+no strong schema, no data relations, no/few connections 
+
+Horizontal          vs      vertical scaling
+add more servers            Improve server capacity Hardware 
+merge data --> DB
+
+
+SQL                                         no SQL
+---------------------------------------------------------------------------------------------
+Horizontal scaling is difficult             BOth vertical horizontal scaling is posssible
+vectical scaling is possible
+
+data is distributed across multiple         data is typicaly merged/ nested in collections
+tables
+
+has schema and relations                    schema-lessa & no relations
+
+limitations to thousands of read/write      greater performance with mass read & write requests
+queries/second
+---------------------------------------------------------------------------------------------------
+
+My SQL installation
+
+my sql server + workbench
+
+and
+
+npm install --save mysql2
+
+2 ways to connect to database
+    1. connect to db --> execute query --> then close the db connection
+        --> re-execute connection code for every query
+        --> time in efficient
+    2. better way to connect is connection pool
+        const pool = mysql.createPool({
+            --> pass some information about the database host
+            host: 'localhost',
+            user: 'root',
+            database: 'node_project',
+            password: 'root'
+        }) 
+        --> pool manages multiple connections --> in which it will give a connection when we ask
+        --> once the query is done, connection is handled back to the pool
+
+        module.expots = pool.promise() => handles async tasks/data  instead of callbacks
+                                        because it qallows us to write code in more structed way
+                                       => we use promise chains instead of callbacks
+        => these promises has 2 functions
+            -> then() and catch()
+
+insert query 
+
+INSERT INTO `node_project`.`products` (`title`, `price`, `description`, `imageUrl`) 
+VALUES ('flash', '19', 'awsome series', 'https://tinyurl.com/realflash');
+
+db.execute("INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)", 
+    [this.title, this.price, this.imageUrl, this.description]
+)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
