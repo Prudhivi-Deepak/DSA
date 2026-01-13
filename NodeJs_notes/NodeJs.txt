@@ -334,24 +334,157 @@ VALUES ('flash', '19', 'awsome series', 'https://tinyurl.com/realflash');
 db.execute("INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)", 
     [this.title, this.price, this.imageUrl, this.description]
 )
+---------------------------------------------------------------------------------------------
+
+sequalize --> is an object relational mapping library
+    - it allows us to interact with a SQL database using JavaScript objects instead of writing raw SQL queries
+    - it provides a higher-level abstraction over the database, making it easier to work with data
+
+sequelize documentsation : https://sequelize.org/docs/v6/
+Sequelize Official Docs: http://docs.sequelizejs.com/
+npm install --save sequelize mysql2
+
+creates a new Sequelize instance to connect to a MySQL database (connection pool)
+const sequelize = new Sequelize(
+    'node_project',
+    'root',
+    'root',
+    {
+        dialect: 'mysql',
+        host: 'localhost'
+    }
+);
+
+to create a sequelize table model
+
+const Product = sequelize.define('product', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+    },
+    title: Sequelize.STRING,
+    price: {
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    },
+    imageUrl: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    description: {
+        type: Sequelize.TEXT,
+        allowNull: false
+    }
+});
 
 
+It looks up all the models defined and creates tables for them --> sync our model with db
+
+Sequelize.sync().then(result => {
+    console.log(result);
+    app.listen(3000);
+})
+.catch(err=>console.log(err))
+
+To create a JS object in for the model
+
+Product.build() --> to create the JavaScript Object alone
+Product.create() --> to create and save the JavaScript Object
+
+One quick note:
+With Sequelize v5, findById() (which we'll use in this course) was replaced by findByPk().
+You use it in the same way, so you can simply replace all occurrences of findById() with findByPk()
+
+Product.findAll() --> to find the records with some filters as well
+    --> this returns list of records
+    --> if used where filter like 
+        --> Product.findAll({ where: {id : productId }})
+            --> this returns single record within a list
+
+Product.findById() / findById()  --> find the single product by id column
+    --> this returns only single output
+
+All these functions return a promise, so we can use then() and catch() on them
+
+Product.findbyPk(prodId).then(product=>{
+    product.title = "changed title here";
+    product.save();  --> to save the record back in db
+}).catch();
 
 
+Product.destroy(product) --> to destroy any product, we can keep it inside Preoduct.findAll().then(product=>{Product.destroy(product)})
+
+Relate the models before sync in app.js
+we can relate them using the keywords like belongsTo(), hasMany()
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
+User.hasMany(Product);
+
+Sequelize.sync({force: true}) --> make the sync forcefully to reflect the new relations if tables are already created
+
+Promise.resolve(user) --> to return a promise instead of user
+technically we don't need Promise if we use then block, it automatically wraps it under promise
+
+Inserting user into the incoming request
+middle ware for incoming requests that's it
+app.use((req, res, next)=>{
+    User.findByPk(1).then(user => {
+        req.user = user; //we are storing the sequelize object
+        next();
+    }).catch(err=>console.log(err));
+});
+
+now in the controllers we can create product like this
+
+req.user.createProduct() --> methods provided by sequelize as it knows the relations
+
+cart / product / user / cartItem ---> relationship
+
+User.hasOne(Cart);
+Cart.belongsTo(User); //optional
+Cart.belongsToMany(Product, {through: CartItem});
+Product.belongsToMany(Cart, {through: CartItem});
 
 
+req.user.cart ==> undefined we can't use it as a attribute here
+but we can get cart by "req.user.getCart()" in controller
 
+I can do something like
+cart.getProducts({ where: { id: productId } }) --> here we get only 1 product in list
+because i have many products for a cart--> getProducts() --> magic method which returns the products with/ without filter
 
+product = products[0]; --> we can assign the list to a variable
+product.cartItem.quantity; --> you know what we have this cartItem (in between table) will be accessible from each product
+--> we can access this magic variable and their attributes
 
+we can update the cart by incrementing the quantity and then adding it back to cart
+fetchedCart.addProduct(product, {
+    through: { quantity: newQuantity }
+})
 
+we can also delete/destroy the cartItem (in between table records) using destroy with magic variable
+product.cartItem.destroy();
 
+Order / User / Product ------> relationship
 
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, {through: OrderItem});
 
+Magic method on stored cart to set cartItems(table) to null
+fetchedCart.setProducts(null); --> worked, made cartItems null
 
+we need to include the products as array in the getOrders method to retreive about products in orders
+Order.belongsToMany(Product, {through: OrderItem});
+req.user.getOrders({include: ['products']}).then().catch();
 
-
-
-
+we can loop through all the products in the template using 
+orders.forEach(order =>{
+    order.products --> parameters 
+    --> if we iterate over this products we get each product and
+    --> each product has a orderItem parameter
+})
 
 
 

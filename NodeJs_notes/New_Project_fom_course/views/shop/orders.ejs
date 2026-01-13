@@ -4,6 +4,29 @@
     <body>
         <%- include('../includes/navigation.ejs') %>
         <main>
-            <h1>Nothing there!</h1>
+            <% if(orders.length <=0){ %>
+                <h1>Nothing there!</h1>
+            <% } else { %>
+                <ul>
+                    <% for(let order of orders) {%>
+                        <li>
+                            <p>
+                                order No : <%= order.id %>
+                            </p>
+                            <p>
+                                order Items
+                            </p>
+                             <ul>
+                                <% for(let product of order.products){%>
+                                    <li>
+                                        <!-- orderItem id : <%= product.title %> &nbsp;&nbsp;orderItem quantity : <%= product.orderItem.quantity %> -->
+                                        <%= product.title %> &nbsp;&nbsp; <%= product.orderItem.quantity %>
+                                    </li>
+                                <%}%>
+                            </ul>
+                        </li>
+                    <%}%>
+                </ul>
+            <%}%>
         </main>
         <%- include('../includes/end.ejs') %>

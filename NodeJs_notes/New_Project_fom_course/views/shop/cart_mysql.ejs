@@ -1,0 +1,28 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <% if(products.length >0){ %>
+                <ul>
+                    <% for( p of products){ %>
+                            <p><%=p.cartItem.id%></p>
+                            <!-- <li><p><%=p.productData.title %> (<%=p.qty %>)</p> -->
+                            <!-- <li><p><%=p.title %>  -->
+                            <!-- <li><p>(<%=p.cartItem.qty %>)</p> -->
+                            <!-- <form action="/cart-delte-item/<%=p.productData.id %>" method="POST"> -->
+                            <!-- <form action="/cart-delte-item/<%=p.id %>" method="POST"> -->
+                                <!-- <input type="hidden" name="productId" value="<%=p.productData.id %>"/> -->
+                                <!-- <input type="hidden" name="productId" value="<%=p.cartItem.id %>"/> -->
+                                <!-- <button class="btn" type="submit" >Delete</button> -->
+                            <!-- </form> -->
+                        <!-- </li> -->
+                    <%}%>
+                </ul>
+            <% }else{%>
+                <p> No Products added in cart!! </p>
+            <%}%>
+
+        </main>
+        <%- include('../includes/end.ejs') %>
