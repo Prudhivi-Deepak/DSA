@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
 
-const mongoConnect = require('./util/database');
+// const mongoConnect = require('./util/database');
+const mongoose = require('mongoose');
 
 const User = require('./models/users')
 
@@ -25,9 +26,9 @@ app.set('views', 'views');
 
 // middle ware for incoming requests that's it
 app.use((req, res, next)=>{
-    User.findByPk("69663b1ef2278857a7f397bc").then(user => {
-        // req.user = user; //we are storing the sequelize/User class object
-        req.user = new User(user.name, user.email, user.cart, user._id); 
+    User.findById("6967a06ca54808445526127e").then(user => {
+        req.user = user; //we are storing the sequelize/User class object
+        // req.user = new User(user.name, user.email, user.cart, user._id); 
         next();
     }).catch(err=>console.log(err));
 });
@@ -43,8 +44,20 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-mongoConnect.mongoConnect(()=>{
-    // console.log(client);
-
+mongoose.connect("mongodb://localhost:27017/mongooseTest").then(result=>{
+    // const user = new User({
+    //     name: 'Will',
+    //     email: 'st@will.com',
+    //     cart: {
+    //         items:[]
+    //     }
+    // })
+    // user.save();
     app.listen(3000);
 });
+
+// mongoConnect.mongoConnect(()=>{
+//     // console.log(client);
+
+//     app.listen(3000);
+// });

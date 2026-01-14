@@ -23,7 +23,7 @@ exports.postAddProduct = (req, res, next) => {
   // product.save().then(()=>{
   //   res.redirect('/');
   // }).catch(err=>console.log(err));
-
+  
   // Product.create({
   // req.user.createProduct({
   //   title: title,
@@ -32,8 +32,8 @@ exports.postAddProduct = (req, res, next) => {
   //   description: description,
   //   // user: req.user.id
   // })
-  const product = new Product({ title: title, price: price, description: description, imageUrl: imageUrl, userId: req.user });
-  product.save().then(result => {
+  const product = new Product(title, price, description, imageUrl, null, req.user._id);
+  product.save().then(result => { 
     console.log(result);
     res.redirect('/admin/products');
   }).catch(err => {
@@ -68,25 +68,24 @@ exports.getEditProduct = (req, res, next) => {
 
   // Product.findById(productId, product => {
   // Product.findByPk(productId).then(product => {
-  // req.user.getProducts({ where : { id : productId}})
+    // req.user.getProducts({ where : { id : productId}})
 
-  // Product.findByPk(productId)
-  Product.findById(productId)
+    Product.findByPk(productId)
     .then(product => {
-      if (!product) {
-        return res.redirect('/');
-      }
-      // product = product[0];
-      res.render('admin/edit-product', {
-        pageTitle: 'Edit Product',
-        path: '/admin/edit-product',
-        editing: editMode, // to differentiate between add and edit & we also include a query parameter in the url to set this value
-        product: product, //pass the product to the edit-product view to pre-fill the form
-        // formsCSS: true,
-        // productCSS: true,
-        // activeAddProduct: true
-      })
+    if (!product) {
+      return res.redirect('/');
+    }
+    // product = product[0];
+    res.render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: editMode, // to differentiate between add and edit & we also include a query parameter in the url to set this value
+      product: product, //pass the product to the edit-product view to pre-fill the form
+      // formsCSS: true,
+      // productCSS: true,
+      // activeAddProduct: true
     })
+  })
     .catch(err => console.log(err));
 };
 
@@ -107,21 +106,14 @@ exports.postEditProduct = (req, res, next) => {
   // updateProduct.save();
 
   // Product.findByPk(productId).then(product => {
-  // product.title = updatedTitle;
-  // product.price = updatedPrice;
-  // product.description = updatedDescription;
-  // product.imageUrl = updatedImageUrl;
-  // const newProduct = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, productId);
-  // new mongodb.ObjectId(productId));
-  // return 
-  // newProduct.save()
-  Product.findById(productId).then(product => {
-    product.title = updatedTitle;
-    product.price = updatedPrice;
-    product.description = updatedDescription;
-    product.imageUrl = updatedImageUrl;
-    return product.save();
-  })
+    // product.title = updatedTitle;
+    // product.price = updatedPrice;
+    // product.description = updatedDescription;
+    // product.imageUrl = updatedImageUrl;
+    const newProduct = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, productId);
+      // new mongodb.ObjectId(productId));
+    // return 
+    newProduct.save()
     .then(result => {
       console.log("updated product : ", result);
       res.redirect('/admin/products');
@@ -133,19 +125,16 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // Product.fetchAll(products => {
   // Product.findAll().then(products => {
-  // req.user.getProducts()
+    // req.user.getProducts()
 
-  // Product.fetchAll()
-  // Product.find().select('title price -_id').populate('userId', 'name -_id')
-  Product.find().populate('userId')
-    .then(products => {
-      console.log(products);
-      res.render('admin/products', {
-        prods: products,
-        pageTitle: 'Admin Products',
-        path: '/admin/products'
-      })
+    Product.fetchAll()
+    .then(products=>{
+    res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin Products',
+      path: '/admin/products'
     })
+  })
     .catch(err => console.log(err));
 };
 
@@ -156,13 +145,11 @@ exports.postDeleteProduct = (req, res, next) => {
   // better to have a callback delete, so it would update adn then redirect
   // Product.deleteById(productId)
   // Product.findByPk(productId)
-  // Product.deleteById(productId)
-  Product.findByIdAndDelete(productId)
-  // Product.findByIdAndRemove(productId)
-    // .then(product => {
-    //   console.log(product);
-    //   return product.destroy();
-    // })
+  Product.deleteById(productId)
+  // .then(product => {
+  //   console.log(product);
+  //   return product.destroy();
+  // })
     .then(result => {
       console.log(result, "updated");
       res.redirect('/admin/products');

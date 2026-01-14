@@ -17,9 +17,9 @@
                                 order Items
                             </p>
                              <ul>
-                                <% for(let product of order.items){%>
+                                <% for(let product of order.products){%>
                                     <li>
-                                        <%= product.title %> &nbsp;&nbsp; <%= product.quantity %>
+                                        <%= product.product.title %> &nbsp;&nbsp; <%= product.quantity %>
                                     </li>
                                 <%}%>
                             </ul>
