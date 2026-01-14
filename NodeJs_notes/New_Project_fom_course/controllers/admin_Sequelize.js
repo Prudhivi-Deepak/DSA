@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const mongodb = require('mongodb');
 
 exports.getAddProduct = (req, res, next) => {
   // res.render('admin/add-product', /{
@@ -18,22 +17,20 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  // const product = new Product(null, title, imageUrl, description, price);
+  const product = new Product(null, title, imageUrl, description, price);
   // product.save()
   // product.save().then(()=>{
   //   res.redirect('/');
   // }).catch(err=>console.log(err));
   
   // Product.create({
-  // req.user.createProduct({
-  //   title: title,
-  //   price: price,
-  //   imageUrl: imageUrl,
-  //   description: description,
-  //   // user: req.user.id
-  // })
-  const product = new Product(title, price, description, imageUrl, null, req.user._id);
-  product.save().then(result => { 
+  req.user.createProduct({
+    title: title,
+    price: price,
+    imageUrl: imageUrl,
+    description: description,
+    // user: req.user.id
+  }).then(result => { 
     console.log(result);
     res.redirect('/admin/products');
   }).catch(err => {
@@ -68,14 +65,12 @@ exports.getEditProduct = (req, res, next) => {
 
   // Product.findById(productId, product => {
   // Product.findByPk(productId).then(product => {
-    // req.user.getProducts({ where : { id : productId}})
-
-    Product.findByPk(productId)
-    .then(product => {
+    req.user.getProducts({ where : { id : productId}}).then(product => {
+    // })
     if (!product) {
       return res.redirect('/');
     }
-    // product = product[0];
+    product = product[0];
     res.render('admin/edit-product', {
       pageTitle: 'Edit Product',
       path: '/admin/edit-product',
@@ -105,15 +100,13 @@ exports.postEditProduct = (req, res, next) => {
   // );
   // updateProduct.save();
 
-  // Product.findByPk(productId).then(product => {
-    // product.title = updatedTitle;
-    // product.price = updatedPrice;
-    // product.description = updatedDescription;
-    // product.imageUrl = updatedImageUrl;
-    const newProduct = new Product(updatedTitle, updatedPrice, updatedDescription, updatedImageUrl, productId);
-      // new mongodb.ObjectId(productId));
-    // return 
-    newProduct.save()
+  Product.findByPk(productId).then(product => {
+    product.title = updatedTitle;
+    product.price = updatedPrice;
+    product.description = updatedDescription;
+    product.imageUrl = updatedImageUrl;
+    return product.save();
+  })
     .then(result => {
       console.log("updated product : ", result);
       res.redirect('/admin/products');
@@ -125,10 +118,9 @@ exports.postEditProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   // Product.fetchAll(products => {
   // Product.findAll().then(products => {
-    // req.user.getProducts()
+    req.user.getProducts().then(products=>{
 
-    Product.fetchAll()
-    .then(products=>{
+    // })
     res.render('admin/products', {
       prods: products,
       pageTitle: 'Admin Products',
@@ -144,12 +136,10 @@ exports.postDeleteProduct = (req, res, next) => {
   // console.log(productId);
   // better to have a callback delete, so it would update adn then redirect
   // Product.deleteById(productId)
-  // Product.findByPk(productId)
-  Product.deleteById(productId)
-  // .then(product => {
-  //   console.log(product);
-  //   return product.destroy();
-  // })
+  Product.findByPk(productId).then(product => {
+    console.log(product);
+    return product.destroy();
+  })
     .then(result => {
       console.log(result, "updated");
       res.redirect('/admin/products');

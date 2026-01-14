@@ -486,5 +486,54 @@ orders.forEach(order =>{
     --> each product has a orderItem parameter
 })
 
+-----------------------------------------------------------------------------
 
+Mongo DB --> A database engine that runs NoSQL 
+Mongo DB Driver in NodeJs
+MongoDB Official Docs: https://docs.mongodb.com/manual/core/security-encryption-at-rest/https://docs.mongodb.com/manual/
+SQL vs NoSQL: https://academind.com/learn/web-dev/sql-vs-nosql/
 
+npm install --save mongodb
+
+// fXlPOiyRbmFQtiQc
+
+to connect to mongo DB use the database.js/ databse_mongo.js code
+
+To insert into the mongo collection witha  JS Object
+db.collection('products').insertOne({title: 'flash', ...}); --> return a promise
+db.collection('products').find() --> to find all documents in teh collection
+    --> returns a cursor/ handle that tells the nodeJs okay give met he next document
+    we can convert all docs to JS array like this
+    --> db.collection('products').find().toArray().then().catch() --> for couple of 100 docs or else use pagination
+
+To find an element
+
+db.collection('products').find({id : productId}).next().then().catch() --> to filter and return 
+next() --> to get me the next document 
+
+db.collection('products')
+.find(
+    {_id : new mongodb.ObjectId(productId)} --> compare object in mongo db by wraping a new Object for productId string
+)
+.next()
+.then(product=>{
+    console.log(product);
+    return product;
+}).catch() 
+
+if we are sure that we only have one product then use findOne()
+
+db.collection('users').find({_id: new mongo.ObjectId(userId)}) --> returns promise
+
+Update the collection docs using
+
+dbOps = db.collection('products').updateOne({_id: new mangodb.ObjectId(this._id)},{ $set: this});
+
+we use a special syntax to update this
+takes an object where we describet he changes we make to the existing docs
+{$set: this}
+
+To find the specific products with a list of productIds
+we can use the below syntax -- productIds (list of ids)
+db.collection('products').find({_id: {$in : productIds}}); --> returns a cursor with all matching products
+.toArray() --> to convert to JS array and return promise
