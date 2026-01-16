@@ -615,3 +615,154 @@ req.user.populate('cart.items.productId')
       });
 --> but if we want to store the whole data in the product id
 --> we can access the _doc hidden parameter to access all the parameters like product: {...item.productId._doc}
+------------------------------------------------------------------------------------
+
+cookies
+
+req.isLoggedIn = true; // setting this before the response doesn't have any use
+res.redirect('/'); // this si a brand new request, so the above info is already lost
+
+we use cookie to store it in browser, so it will not effect other users
+we set Headers in the response using the following syntax
+
+res.setHeader('Set-Cookie', 'loggedIn=true') --> value will be the key value pair
+console.log(req.get('Cookie')); --> we can retrieve the Cookies usign req.get('Cookie') --> multiple cookies as string
+--> multiple cookies are splited by ; to retreive them seperately
+--> better to not save sensitive info in the cookies as it is editable
+
+res.setHeader('Set-Cookie', 'loggedIn=true; Max-Age:10')--> configure 10 sec expire time
+Domain= or Secure (means HTTPS only) or httponly
+
+cookies are strored on client side
+sessions are stored in server-side
+
+npm install --save express-session
+
+initialize the session in app.js
+
+app.use(session({
+    secret:'secret-in-app',
+    resave: false,
+    saveUnintialized: false
+}))
+
+npm install --save connect-mongodb-session
+
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+req.session.destroy(); --> to destroy the session
+
+we stored req.session.userId = userId --> int eh niddleware function --> retreive the userId and get user 
+then save to req.user = user for all requests
+
+More on Sessions: https://www.quora.com/What-is-a-session-in-a-Web-Application
+
+More on Cookies: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+Express-session Official Docs: https://github.com/expressjs/session
+----------------------------------------------------------------------------------------
+
+Authentication sign up/in --> session based authentication approach
+to save passwords, we need to encrypt it first
+so we use bcryptjs library
+npm install --save bcryptjs
+
+use bcrypt.hash(password, 12) --> second argument is how many times this hash function to be applied
+--> this returns a promise, so we can use then()
+
+we can add middleware file function to protect routes --> it goes from left to right (redirects to login form)
+router.get('/add-product', isAuth, adminController.getAddProduct);
+
+CSRF Attacks --> Cross-Site Request Forgery
+manipulate/abuse sessions and and execute malicious code
+make users access our application with the rendered views by our application, so the session is not available on any fake pages
+
+npm install --save csurf --> pacakge used to create csrf tokens, that we can embbed into our forms or pages for every req that does something on backend
+that changes the user state, and on the server side it checks whether the incoming request has the csrf token or not
+
+After importing we can create 
+const csrfProtection = csrf(); --> we can even configure inside csrf({ }), but default one works fine
+--> csrfProtection --> is a middleware, we have to use it as one
+app.use(csrfProtection); --> add it to our app
+
+for any post request this pacakge will look for csrf token in the request body
+so to add it to the request 
+add it to the responseas follows
+key is as our wish, value is calling csrfToken() from req.csrfToken()
+
+csrfToken: req.csrfToken()
+
+render the csrfToken value in ejs file as an hidden input value with a name="_csrf" because the package will look for this specific name
+<input type="hidden" name="_csrf" value="<%=csrfToken%>"> 
+
+(https://www.npmjs.com/search?q=express%20csrf). You may, for example, 
+consider using this package (which has a different API than csurf()): https://www.npmjs.com/package/csrf-csrf.
+
+Please understand that support in this course currently still focuses on the csurf API, as shown in the course videos and code snapshots.
+
+providing user feedback on login for invalid or other cases,
+we can send error msg using sessions --> after accessing it delete it so next calls don't pick it up
+we have a pacakge for the same process
+
+npm install --save connect-flash
+
+postLogin
+req.flash('error', 'Invalid email or password!'); --> add flash error key value pair to the request before redirecting to the login pages
+getLogin
+errorMessage: req.flash('error') --> in the response object, it is a list of errorMessages or empty array
+
+Bcrypt Official Docs: https://github.com/dcodeIO/bcrypt.js
+More on CSRF Attacks: https://www.acunetix.com/websitesecurity/csrf-attacks/
+---------------------------------------------------------------------------------------------------------------
+
+Using send grid to send mails from node js app
+
+npm install --save nodemailer nodemailer-sendgrid-transport
+
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: ''--> configure
+    }
+}));
+
+we can use transporter to send the mails
+
+    res.redirect('/login');
+    return transporter.sendMail({
+        to: email,
+        from: 'shop@comp.com',
+        subject: 'mail subject',
+        html: '<h1>success</h1>'
+    });
+
+}).then(result=>{
+
+});
+
+const crypto = require('crypto');
+
+
+logic to getNewPassword page load by taking token from params from request and check in the User DB if the valid token present
+
+User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } }).then(user => {
+    res.render('auth/newPassword', {
+      path: '/new-password',
+      pageTitle: 'New Password',
+      // isAuthenticated: false,
+      errorMessage: req.flash('error'),
+      userId: user._id.toString()
+    });
+  }).catch(err => console.log(err));
+
+filter on methods 
+
+Product.findByIdAndDelete(productId) instead of this we can use Product.deleteOne({_id: productId, userId: req.user._id})
+--------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+

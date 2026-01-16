@@ -234,3 +234,17 @@ form {
     display: none;
   }
 }
+
+.user-message {
+  margin: auto;
+  width: 90%;
+  border: 1px solid skyblue;
+  background: burlywood;
+  padding: 1rem;
+  text-align: center;
+}
+
+.user-message--error {
+  border-color: red;
+  background-color: red;
+}

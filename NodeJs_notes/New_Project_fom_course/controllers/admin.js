@@ -2,11 +2,16 @@ const Product = require('../models/product');
 const mongodb = require('mongodb');
 
 exports.getAddProduct = (req, res, next) => {
+  if(!req.session.isLoggedIn){
+    return res.redirect('/login');
+  }
+
   // res.render('admin/add-product', /{
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
+    isAuthenticated: req.session.isLoggedIn
     // formsCSS: true,
     // productCSS: true,
     // activeAddProduct: true
@@ -82,6 +87,7 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode, // to differentiate between add and edit & we also include a query parameter in the url to set this value
         product: product, //pass the product to the edit-product view to pre-fill the form
+        isAuthenticated: req.session.isLoggedIn
         // formsCSS: true,
         // productCSS: true,
         // activeAddProduct: true
@@ -116,17 +122,21 @@ exports.postEditProduct = (req, res, next) => {
   // return 
   // newProduct.save()
   Product.findById(productId).then(product => {
+
+    if(product.userId.toString() !== req.user._id.toString()){
+      return res.redirect('/');
+    }
+
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.description = updatedDescription;
     product.imageUrl = updatedImageUrl;
-    return product.save();
-  })
-    .then(result => {
+    return product.save().then(result => {
       console.log("updated product : ", result);
       res.redirect('/admin/products');
       // return the page after all promises are done
-    })
+    });
+  })
     .catch(err => console.log(err));
 };
 
@@ -137,13 +147,16 @@ exports.getProducts = (req, res, next) => {
 
   // Product.fetchAll()
   // Product.find().select('title price -_id').populate('userId', 'name -_id')
+  // Product.find({userId: req.user._id}).populate('userId')
   Product.find().populate('userId')
     .then(products => {
+      console.log("req.user._id : ", req.user._id);
       console.log(products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
-        path: '/admin/products'
+        path: '/admin/products',
+        isAuthenticated: req.session.isLoggedIn
       })
     })
     .catch(err => console.log(err));
@@ -157,7 +170,8 @@ exports.postDeleteProduct = (req, res, next) => {
   // Product.deleteById(productId)
   // Product.findByPk(productId)
   // Product.deleteById(productId)
-  Product.findByIdAndDelete(productId)
+  // Product.findByIdAndDelete(productId)
+  Product.deleteOne({_id: productId, userId: req.user._id})
   // Product.findByIdAndRemove(productId)
     // .then(product => {
     //   console.log(product);

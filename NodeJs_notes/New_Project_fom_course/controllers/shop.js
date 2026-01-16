@@ -4,6 +4,7 @@ const Order = require('../models/order');
 const order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
+  console.log(req.session.isLoggedIn);
   // Product.findAll().
   Product.find()
     .then(products => {
@@ -11,7 +12,8 @@ exports.getProducts = (req, res, next) => {
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'All Products',
-        path: '/products'
+        path: '/products',
+        isAuthenticated: req.session.isLoggedIn
       });
     }).catch(err => {
       console.log(err);
@@ -44,20 +46,24 @@ exports.getProduct = (req, res, next) => {
       product: product,
       pageTitle: product ? product.title : 'Product Not Found',
       // pageTitle: product[0] ? product[0].title : 'Product Not Found',
-      path: '/products'
+      path: '/products',
+      isAuthenticated: req.session.isLoggedIn
     });
   }).catch(err => console.log(err));
 };
 
 exports.getIndex = (req, res, next) => {
   // Product.findAll()
+  // const csrfToken = req.csrfToken();
   Product.find()
     .then(products => {
       console.log(products);
       res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
-        path: '/'
+        path: '/',
+        // isAuthenticated: req.session.isLoggedIn,
+        // csrfToken: csrfToken
       });
     }).catch(err => {
       console.log(err);
@@ -72,7 +78,10 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.user.populate('cart.items.productId')
+  console.log("get cart : user : ", req.user);
+  req.user
+  // req.session.user
+  .populate('cart.items.productId')
     // .execPopulate() --> not present in the latest library
     // getCart()
     .then(cartProducts => {
@@ -81,7 +90,8 @@ exports.getCart = (req, res, next) => {
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Your Cart',
-        products: products
+        products: products,
+        isAuthenticated: req.session.isLoggedIn
       });
     }).catch(err => console.log(err));
 };
@@ -137,7 +147,8 @@ exports.postCart = (req, res, next) => {
 exports.postCartDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
   console.log('Product ID to be deleted from cart:', productId);
-  req.user.deleteItemFromCart(productId)
+  // req.user.deleteItemFromCart(productId)
+  req.session.user.deleteItemFromCart(productId)
     // .then(cart=>{
     //   return cart.getProducts({where : { id : productId}});
     // })
@@ -232,7 +243,8 @@ exports.postOrder = (req, res, next) => {
       });
       const order = new Order({
         user: {
-          name: req.user.name,
+          // name: req.user.name,
+          email: req.user.email,
           userId: req.user
         },
         products: products
@@ -289,7 +301,8 @@ exports.getOrders = (req, res, next) => {
       res.render('shop/orders', {
         path: '/orders',
         pageTitle: 'Your Orders',
-        orders: orders
+        orders: orders,
+        isAuthenticated: req.session.isLoggedIn
       });
     }).catch(err => console.log(err));
 };
