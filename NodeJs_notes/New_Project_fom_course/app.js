@@ -66,6 +66,9 @@ app.use((req, res, next) => {
 
     User.findById(req.session.userId).then(user => {
         // User.findById("6967a06ca54808445526127e").then(user => {
+        if (!user) {
+            return next();
+        }
         console.log("user in app : ", user);
         req.user = user; //we are storing the sequelize/User class object
         // req.session.isLoggedIn = true;
@@ -73,8 +76,9 @@ app.use((req, res, next) => {
         // req.user = new User(user.name, user.email, user.cart, user._id); 
         next();
     }).catch(err => {
-        console.log(err);
-        next();
+        // console.log(err);
+        // next();
+        throw new Error(err);
 
     });
 });
