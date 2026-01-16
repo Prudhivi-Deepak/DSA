@@ -762,6 +762,67 @@ filter on methods
 Product.findByIdAndDelete(productId) instead of this we can use Product.deleteOne({_id: productId, userId: req.user._id})
 --------------------------------------------------------------------------------------------------------------------------------
 
+Validation on forms
+
+--> validations on client side
+--> validations on server side
+npm install --save express-validator
+
+Express-Validator Docs: https://express-validator.github.io/docs/
+Validator.js (which is used behind the scenes) Docs: https://github.com/chriso/validator.js
+
+const {check} = require('express-validator/check'); //gives us a check function whihc returns a middleware
+router.post('/signup', check('email').isEmail(), authController.postSignup); --> easy to intergrate as the middleware in router
+router.post('/signup', check('email').isEmail().withMessage("Invalid email"), authController.postSignup); --> also add custom errorMessages
+
+---> custom validators along with builtin ones, it is important to have th evalue custom(()=>{});
+router.post('/signup', check('email').isEmail().withMessage("Invalid email")
+    .custom((value, {req})=>{
+        if(value=="test@test.com"){
+            throw new Error("This email address is forbidden");
+        }
+        return true;
+}), authController.postSignup);
+
+---> second argument i can use the default error message, but individual messages overrides it if provided 
+--> body is imported and used for password match as follows
+body('confirmPassword', 'passwords are not same, please enter same passwords').custom((value, {req})=>{
+        if(value !== req.body.password){
+            throw new Error("Password have to match");
+        }
+        return true;
+    })
+
+const { validationResult } = require('express-validator/check'); --> in controllers to cehck all teh validation Errors being thrown in router
+
+in the middleware in controllers i will extract the Errors
+const errors = validationResult(req);
+if(errors.isEmpty()) --> true if no errors
+
+errors.array() --> returns the array of errors
+
+if(!errors.isEmpty()) return res.status(422).render()--> common code for validation failed
+
+
+adding Async validations for user exists in db for signup
+
+inside the custom(value, {req})=>{
+    return User.findOne({email: value})
+        .then(user=>{
+            if(user){
+                // req.flash('error', 'Email already exisits');
+                // return res.redirect('/signup');
+                return Promise.reject('Email already exisits'); ---> using promise reject , 
+                                                                    so if the return value is promise the pacakge waits for the promise to be
+                                                                    fullfillment, if none returned/ no errors
+            }
+        })
+}
+
+normalizeEmail() (make email lower case and normalize it), trim() --> built-in sanitizer functions
+--------------------------------------------------------------------------------------------------------
+
+
 
 
 

@@ -47,7 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret:'secret-in-app',
+    secret: 'secret-in-app',
     resave: false,
     saveUninitialized: false,
     store: store
@@ -57,28 +57,32 @@ app.use(csrfProtection);
 app.use(flash());
 
 // middle ware for incoming requests that's it
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
 
-    if(!req.session.userId){
+    if (!req.session.userId) {
         next();
         return;
     }
 
     User.findById(req.session.userId).then(user => {
-    // User.findById("6967a06ca54808445526127e").then(user => {
+        // User.findById("6967a06ca54808445526127e").then(user => {
         console.log("user in app : ", user);
         req.user = user; //we are storing the sequelize/User class object
         // req.session.isLoggedIn = true;
         // req.session.user = user; //we are storing the sequelize/User class object
         // req.user = new User(user.name, user.email, user.cart, user._id); 
         next();
-    }).catch(err=>console.log(err));
+    }).catch(err => {
+        console.log(err);
+        next();
+
+    });
 });
 
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
     // locals --> because used in only the views we renderend
-    res.locals.isAuthenticated= req.session.isLoggedIn;
-    res.locals.csrfToken= req.csrfToken();
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
     next();
 });
 
@@ -88,7 +92,7 @@ app.use(authRoutes);
 
 app.use(errorController.get404);
 
-mongoose.connect(MONGODB_URI).then(result=>{
+mongoose.connect(MONGODB_URI).then(result => {
     // const user = new User({
     //     name: 'Will',
     //     email: 'st@will.com',

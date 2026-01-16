@@ -1,8 +1,9 @@
 const Product = require('../models/product');
 const mongodb = require('mongodb');
+const { validationResult } = require('express-validator');
 
 exports.getAddProduct = (req, res, next) => {
-  if(!req.session.isLoggedIn){
+  if (!req.session.isLoggedIn) {
     return res.redirect('/login');
   }
 
@@ -11,7 +12,10 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    isAuthenticated: req.session.isLoggedIn
+    hasError: false,
+    errorMessage: null,
+    isAuthenticated: req.session.isLoggedIn,
+    validationErrors: []
     // formsCSS: true,
     // productCSS: true,
     // activeAddProduct: true
@@ -23,6 +27,27 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('admin/edit-product', {
+      path: '/admin/edit-product',
+      pageTitle: 'Add Product',
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+        imageUrl: imageUrl
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    })
+  }
+
+
   // const product = new Product(null, title, imageUrl, description, price);
   // product.save()
   // product.save().then(()=>{
@@ -87,7 +112,10 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode, // to differentiate between add and edit & we also include a query parameter in the url to set this value
         product: product, //pass the product to the edit-product view to pre-fill the form
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
+        hasError: false,
+        errorMessage: null,
+        validationErrors: []
         // formsCSS: true,
         // productCSS: true,
         // activeAddProduct: true
@@ -102,6 +130,27 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('admin/edit-product', {
+      path: '/admin/edit-product',
+      pageTitle: 'Edit Product',
+      editing: true,
+      hasError: true,
+      product: {
+        title: updatedTitle,
+        price: updatedPrice,
+        description: updatedDescription,
+        imageUrl: updatedImageUrl,
+        _id: productId
+      },
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array()
+    })
+  }
+
 
   // const updateProduct = new Product(
   //   productId,
@@ -123,7 +172,7 @@ exports.postEditProduct = (req, res, next) => {
   // newProduct.save()
   Product.findById(productId).then(product => {
 
-    if(product.userId.toString() !== req.user._id.toString()){
+    if (product.userId.toString() !== req.user._id.toString()) {
       return res.redirect('/');
     }
 
@@ -156,7 +205,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: 'Admin Products',
         path: '/admin/products',
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
       })
     })
     .catch(err => console.log(err));
@@ -171,8 +220,8 @@ exports.postDeleteProduct = (req, res, next) => {
   // Product.findByPk(productId)
   // Product.deleteById(productId)
   // Product.findByIdAndDelete(productId)
-  Product.deleteOne({_id: productId, userId: req.user._id})
-  // Product.findByIdAndRemove(productId)
+  Product.deleteOne({ _id: productId, userId: req.user._id })
+    // Product.findByIdAndRemove(productId)
     // .then(product => {
     //   console.log(product);
     //   return product.destroy();

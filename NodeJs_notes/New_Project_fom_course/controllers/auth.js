@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
+// const { validationResult } = require('express-validator/check');
+const { validationResult } = require('express-validator');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
@@ -15,7 +17,10 @@ exports.getLogin = (req, res, next) => {
     path: '/login',
     pageTitle: 'Login',
     // isAuthenticated: false
-    errorMessage: req.flash('error')
+    errorMessage: req.flash('error'),
+    oldInput: {email: "", password: ""},
+    validationErrors: []
+    
   });
 };
 
@@ -23,7 +28,9 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false
+    errorMessage: req.flash('error'),
+    oldInput: {email: "", password: "", confirmPassword: ""},
+    validationErrors: []
   });
 };
 
@@ -31,6 +38,19 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   // User.findById('5bab316ce0a7c75f783cb8a8')
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('auth/login', {
+      path: '/login',
+      pageTitle: 'login',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {email: email, password: password},
+      validationErrors: errors.array()
+    })
+  }
+
   User.findOne({ email: email })
     .then(user => {
       if (!user) {
@@ -69,6 +89,20 @@ exports.postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('auth/signup', {
+      path: '/signup',
+      pageTitle: 'Signup',
+      errorMessage: errors.array()[0].msg,
+      oldInput: {email: email, password: password, confirmPassword: req.body.confirmPassword},
+      validationErrors: errors.array()
+    })
+  }
+
+
 
   User.findOne({ email: email }).then(xuser => {
     if (xuser) {
@@ -162,26 +196,26 @@ exports.getNewPassword = (req, res, next) => {
   }).catch(err => console.log(err));
 };
 
-exports.postNewPassword = (req, res, next)=>{
+exports.postNewPassword = (req, res, next) => {
   const newPassword = req.body.password;
   const userId = req.body.userId;
   const passwordToken = req.body.passwordToken;
   let resetUser;
 
-  User.findOne({resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() }, _id: userId}).then(user=>{
+  User.findOne({ resetToken: passwordToken, resetTokenExpiration: { $gt: Date.now() }, _id: userId }).then(user => {
     resetUser = user;
     return bcrypt.hash(newPassword, 12);
   })
-  .then(hashedPassword=>{
-    resetUser.password = hashedPassword;
-    resetUser.resetToken = undefined;
-    resetUser.resetTokenExpiration = undefined;
-    return resetUser.save();
-  })
-  .then(result=>{
-    res.redirect('/login');
-  })
-  .catch(err=>console.log(err));
-  
+    .then(hashedPassword => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then(result => {
+      res.redirect('/login');
+    })
+    .catch(err => console.log(err));
+
 
 };
