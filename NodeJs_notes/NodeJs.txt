@@ -1098,6 +1098,37 @@ Streaming Files: https://medium.freecodecamp.org/node-js-streams-everything-you-
 Generating PDFs with PDFKit: http://pdfkit.org/docs/getting_started.html
 --------------------------------------------------------------------------------------------------------------------
 
+pagination
+
+<section class="pagination"> --> add page links in the ejs
+    <a href="/?page=1">1</a>
+    <a href="/?page=2">2</a>
+</section>
+
+now get the ?page=1 --> query parameter in the controller
+const page = req.query.page;
+
+ Product.find()
+  .skip((page-1)*ITEMS_PER_PAGE) --> skip this many items
+  .limit(ITEMS_PER_PAGE) --> limit the no. of items/records
+    .then(products => {
+        ....
+    })
+
+ Product.find()
+    .countDocuments() --> to count the total nums of documents
+    .then(numProducts => {
+      totalItems = numProducts;
+      console.log("totalItems : ", totalItems);
+      return Product.find().skip((page - 1) * ITEMS_PER_PAGE) --> skip
+        .limit(ITEMS_PER_PAGE) --> then limit--> then we can send currPage, previous page, next page, last page details in the response
+    })
+    .then(products => {
+        ...
+    })
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
