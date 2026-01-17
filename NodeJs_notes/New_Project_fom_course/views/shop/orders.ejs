@@ -20,6 +20,7 @@
                                 <% for(let product of order.products){%>
                                     <li>
                                         <%= product.product.title %> &nbsp;&nbsp; <%= product.quantity %>
+                                        <a href="/orders/<%=order._id%>">Invoice</a>
                                     </li>
                                 <%}%>
                             </ul>

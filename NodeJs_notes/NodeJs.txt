@@ -995,5 +995,111 @@ Source: https://httpstatuses.com/
 Error Handling in Express.js - Official Docs: https://expressjs.com/en/guide/error-handling.html
 ----------------------------------------------------------------------------------------------------------------
 
+File upload --> but the urlencoded in app.js works only for text data
+
+npm install --save multer --> parse incoming files
+
+<form method="POST" enctype="multipart/form-data"> --> add enctype format
+<input name="image" type"file">
+
+app.use(multer({dest: 'images}).single('image')); --> in backend app.js use multer and single (single file) and name for the input 'image'
+--> we can store the files in thedestination : images folder
+--> we can have storage in the configuration instead of destination for extra features
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb)=>{
+        cb(null, 'images'); --> null says multer to okay to store it
+
+    } 
+    filename: (req, file, cb)=>{
+        // cb(null, file.filename+'-'+file.originalname);
+        cb(null, new Date().toISOString()+'-'+file.originalname);
+    }
+}); 
+
+--> we can also add filter to the file type
+const fileFilter = (req, fiel, cb)=>{
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg'  || file.mimetype === 'image/jpeg'){
+        cb(null, true); --> to store the file
+    }
+    else{
+        cb(null, false); --> to not store the file
+    }
+}
+
+req.file stores all information about the file with {fieldname: ..,  originalname:.., encoding:.., mimetype:.., buffer..., size:.. }
+
+app.use('/images', express.static(path.join(__dirname, 'images'))); --> images under this folder also serves now - we also need to modify the path here of the req, 
+
+--> but it checks the /admin/images folder whihc is not there
+--> so we make changes in ejs to make the path absolute
+
+<img src="/<%= product.imageUrl %>" alt="<%= product.title %>">
+
+-->for small files sending the response as file is okay, but for large file we need to stream the data
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'invoice-'+orderId+'.pdf';
+  const InvoicePath = path.join('data', 'invoices', invoiceName);
+  console.log(InvoicePath);
+  fs.readFile(InvoicePath, (err, data)=>{ //--> read file and send response by setting headers
+    if(err){
+      return next(err);
+    }
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'inline; filename="'+invoiceName+'"'); --> inline opens the pdf in browser
+    res.setHeader("Content-Disposition", 'attachment; filename="'+invoiceName+'"'); --> open the downloadable file to save in localhost
+    res.send(data);
+  })
+}; 
+
+--> Let's see how to stream the data
+
+const file = fs.createReadStream(InvoicePath);
+
+res.setHeader("Content-Type", "application/pdf");
+res.setHeader("Content-Disposition", 'attachment; filename="'+invoiceName+'"');
+file.pipe(res) --> pipe the stream into a writable stream
+
+--> we can create the pdf on fly with real invoice data instead of using the static file  using PDFKit package
+
+npm install --save pdfkit
+
+const pdfDoc = new pdfkit(); --> 
+
+res.setHeader("Content-Type", "application/pdf");
+res.setHeader("Content-Disposition", 'attachment; filename="'+invoiceName+'"');
+
+pdfDoc.pipe(fs.createWriteStream(InvoicePath)); --> create a writable stream
+
+pdfDoc.fontSize(26).text("Invoice", {underLine: true});
+pdfDoc.text("-----------------------------------------");
+
+let totalPrice = 0;
+order.products.forEach(product=>{
+    totalPrice += product.quantity * product.product.price;
+    pdfDoc.fontSize(14).text(product.product.title+" - "+product.quantity + ' x $'+ product.product.price);
+})
+
+pdfDoc.text('Total Price : $'+totalPrice);
+
+pdfDoc.pipe(res);
+
+pdfDoc.text('Hello World!'); --> add text to stream
+pdfDoc.end(); --> end after adding the text
+
+
+----> deleting a file
+fs.unlink() --> it deletes the named file
+
+Multer Official Docs: https://github.com/expressjs/multer
+Streaming Files: https://medium.freecodecamp.org/node-js-streams-everything-you-need-to-know-c9141306be93
+Generating PDFs with PDFKit: http://pdfkit.org/docs/getting_started.html
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 

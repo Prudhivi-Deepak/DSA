@@ -2,7 +2,9 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 const order = require('../models/order');
-
+const fs = require('fs');
+const path = require('path');
+const pdfkit = require('pdfkit');
 exports.getProducts = (req, res, next) => {
   console.log(req.session.isLoggedIn);
   // Product.findAll().
@@ -80,8 +82,8 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   console.log("get cart : user : ", req.user);
   req.user
-  // req.session.user
-  .populate('cart.items.productId')
+    // req.session.user
+    .populate('cart.items.productId')
     // .execPopulate() --> not present in the latest library
     // getCart()
     .then(cartProducts => {
@@ -238,8 +240,8 @@ exports.postCartDeleteProduct = (req, res, next) => {
 exports.postOrder = (req, res, next) => {
   req.user.populate('cart.items.productId')
     .then(cartProducts => {
-      const products = cartProducts.cart.items.map(item=>{
-        return {quantity: item.quantity, product: {...item.productId._doc}};
+      const products = cartProducts.cart.items.map(item => {
+        return { quantity: item.quantity, product: { ...item.productId._doc } };
       });
       const order = new Order({
         user: {
@@ -252,11 +254,11 @@ exports.postOrder = (req, res, next) => {
       return order.save();
     })
 
-  // req.user.addOrder()
+    // req.user.addOrder()
     .then(result => {
       return req.user.clearCart();
     })
-    .then(result=>{
+    .then(result => {
       res.redirect('/orders');
     })
     .catch(err => console.log(err));
@@ -292,8 +294,8 @@ exports.postOrder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
 
-  Order.find({'user.userId': req.user._id})
-  // req.user.getOrders()
+  Order.find({ 'user.userId': req.user._id })
+    // req.user.getOrders()
     .then(orders => {
       console.log("orders : ", orders);
       console.log(orders[0]._id);
@@ -334,3 +336,65 @@ exports.getOrders = (req, res, next) => {
 //     pageTitle: 'Checkout'
 //   });
 // };
+
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'invoice-' + orderId + '.pdf';
+  const InvoicePath = path.join('data', 'invoices', invoiceName);
+  console.log(InvoicePath);
+
+  Order.findById(orderId)
+    // req.user.getOrders()
+    .then(order => {
+      if (!order) {
+        return next(new Error('Order not Found'));
+      }
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        return next(new Error('Order not allowed to access'));
+      }
+
+      // fs.readFile(InvoicePath, (err, data) => {
+      //   if (err) {
+      //     return next(err);
+      //   }
+
+      //   res.setHeader("Content-Type", "application/pdf");
+      //   // res.setHeader("Content-Disposition", "inline");
+      //   // res.setHeader("Content-Disposition", 'inline; filename="'+invoiceName+'"');
+      //   res.setHeader("Content-Disposition", 'attachment; filename="' + invoiceName + '"');
+      //   res.send(data);
+      // })
+      // const file = fs.createReadStream(InvoicePath);
+
+      // res.setHeader("Content-Type", "application/pdf");
+      // res.setHeader("Content-Disposition", 'inline; filename="' + invoiceName + '"');
+      // file.pipe(res)
+
+      const pdfDoc = new pdfkit();
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", 'inline; filename="' + invoiceName + '"');
+
+      pdfDoc.pipe(fs.createWriteStream(InvoicePath)); //--> create a writable stream
+
+      pdfDoc.fontSize(26).text("Invoice", { underLine: true });
+      pdfDoc.text("-----------------------------------------");
+
+      let totalPrice = 0;
+      order.products.forEach(product => {
+        totalPrice += product.quantity * product.product.price;
+        pdfDoc.fontSize(14).text(product.product.title + " - " + product.quantity + ' x $' + product.product.price);
+      })
+
+      pdfDoc.text('Total Price : $' + totalPrice);
+
+      pdfDoc.pipe(res);
+
+      pdfDoc.text('Hello World!'); //--> add text to stream
+      pdfDoc.end(); //--> end after adding the text
+
+    })
+    .catch(err => console.log(err));
+
+}; 

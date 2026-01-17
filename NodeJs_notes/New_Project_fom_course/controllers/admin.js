@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const mongodb = require('mongodb');
 const { validationResult } = require('express-validator');
+const fileHelper = require('../util/file');
 
 exports.getAddProduct = (req, res, next) => {
   if (!req.session.isLoggedIn) {
@@ -24,12 +25,14 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  // const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
 
+
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  if (!image || !errors.isEmpty()) {
     console.log(errors.array());
     return res.status(422).render('admin/edit-product', {
       path: '/admin/edit-product',
@@ -40,12 +43,16 @@ exports.postAddProduct = (req, res, next) => {
         title: title,
         price: price,
         description: description,
-        imageUrl: imageUrl
+        // imageUrl: imageUrl
       },
-      errorMessage: errors.array()[0].msg,
-      validationErrors: errors.array()
+      // errorMessage: errors.array()[0].msg,
+      errorMessage: 'Attached file is not an img',
+      validationErrors: []
+      // errors.array()
     })
   }
+
+  const imageUrl = image.path;
 
 
   // const product = new Product(null, title, imageUrl, description, price);
@@ -127,7 +134,8 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
+  // const updatedImageUrl = req.body.imageUrl;
+  const updatedImage = req.file;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
 
@@ -143,7 +151,7 @@ exports.postEditProduct = (req, res, next) => {
         title: updatedTitle,
         price: updatedPrice,
         description: updatedDescription,
-        imageUrl: updatedImageUrl,
+        // imageUrl: updatedImageUrl,
         _id: productId
       },
       errorMessage: errors.array()[0].msg,
@@ -179,7 +187,11 @@ exports.postEditProduct = (req, res, next) => {
     product.title = updatedTitle;
     product.price = updatedPrice;
     product.description = updatedDescription;
-    product.imageUrl = updatedImageUrl;
+    // product.imageUrl = updatedImageUrl;
+    if (updatedImage) {
+      fileHelper.deleteFile(product.imageUrl);
+      product.imageUrl = image.path;
+    }
     return product.save().then(result => {
       console.log("updated product : ", result);
       res.redirect('/admin/products');
@@ -220,15 +232,22 @@ exports.postDeleteProduct = (req, res, next) => {
   // Product.findByPk(productId)
   // Product.deleteById(productId)
   // Product.findByIdAndDelete(productId)
-  Product.deleteOne({ _id: productId, userId: req.user._id })
+  Product.findById(productId).then(product => {
+    if (!product) {
+      return next(new Error("Product not found"));
+    }
+    fileHelper.deleteFile(product.imageUrl);
+    return Product.deleteOne({ _id: productId, userId: req.user._id })
+
+  })
     // Product.findByIdAndRemove(productId)
     // .then(product => {
     //   console.log(product);
     //   return product.destroy();
     // })
     .then(result => {
-      console.log(result, "updated");
-      res.redirect('/admin/products');
-    })
+    console.log(result, "updated");
+    res.redirect('/admin/products');
+  })
     .catch(err => console.log(err));
 };
