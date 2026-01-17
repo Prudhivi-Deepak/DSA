@@ -223,6 +223,41 @@ exports.getProducts = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
+exports.deleteProduct = (req, res, next) => {
+  const productId = req.params.productId;
+  // console.log(productId);
+  // better to have a callback delete, so it would update adn then redirect
+  // Product.deleteById(productId)
+  // Product.findByPk(productId)
+  // Product.deleteById(productId)
+  // Product.findByIdAndDelete(productId)
+  Product.findById(productId).then(product => {
+    if (!product) {
+      return next(new Error("Product not found"));
+    }
+    fileHelper.deleteFile(product.imageUrl);
+    return Product.deleteOne({ _id: productId, userId: req.user._id })
+
+  })
+    // Product.findByIdAndRemove(productId)
+    // .then(product => {
+    //   console.log(product);
+    //   return product.destroy();
+    // })
+    .then(result => {
+      console.log(result, "updated");
+      // res.redirect('/admin/products');
+      res.status(200).json({
+        message: 'Success'
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        message: 'Deleting Product failed'
+      });
+      // console.log(err)
+    });
+};
 
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.params.productId;
@@ -246,8 +281,8 @@ exports.postDeleteProduct = (req, res, next) => {
     //   return product.destroy();
     // })
     .then(result => {
-    console.log(result, "updated");
-    res.redirect('/admin/products');
-  })
+      console.log(result, "updated");
+      res.redirect('/admin/products');
+    })
     .catch(err => console.log(err));
 };

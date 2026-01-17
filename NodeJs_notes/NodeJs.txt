@@ -1128,6 +1128,33 @@ const page = req.query.page;
     })
 -----------------------------------------------------------------------------------------------------------------------------------------
 
+Async requests
+--> in the app if we delete a product, it reloads whole page by giving removed product version list 
+--> instead we can send the request and after successfull deletion we send a json object to frontend after whihc we just delete the dom element of that product
+
+<button class="btn" type="button" onclick="deleteProduct(this)" >Delete</button> --> instead of form submit button
+--> we use normal button with onclick = function with context function(this)
+--> we have btn in the function btn.parentNode and get inputs for that Div
+
+we can use delete route from JS script code 
+--> delte request doesn't have body
+fetch('/admin/product/'+productId, {
+    method: 'DELETE',
+    headers: {
+        'csrf-token': csrf
+    }
+}).then(result=>{
+    console.log(result);
+}).catch(err=>{
+    console.log(err);
+})
+---> for this request to be parsed (Json data), we need to add new parser for Json when we need it
+--> after getting success json message response, we have to manipulate the DOM 
+
+productElement.parentNode.removeChild(productElement); --> remove the child DOM after getting the parentNode (parent DOM)
+
+More on the fetch API: https://developers.google.com/web/updates/2015/03/introduction-to-fetch
+More on AJAX Requests: https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX/Getting_Started
 
 
 
