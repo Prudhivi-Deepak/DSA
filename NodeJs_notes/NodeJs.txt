@@ -1155,6 +1155,30 @@ productElement.parentNode.removeChild(productElement); --> remove the child DOM 
 
 More on the fetch API: https://developers.google.com/web/updates/2015/03/introduction-to-fetch
 More on AJAX Requests: https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX/Getting_Started
+--------------------------------------------------------------------------------------------------------------------------
+
+Stripe for payments --> client collects credit card data --> stripe servers (3rd party ) token to client (browser) --> client sends the token to the server
+Official Stripe.js Docs: https://stripe.com/docs
+
+npm install --save stripe
+
+return stripe.checkout.sessions.create({ --> stripe needs these things to be configured
+    payment_method_types: ['card'],
+    line_items: products.map(p=>{
+        return {
+            name: p.productId.title, --> extra info
+            description: p.productId.description, --> extra info
+            amount: p.productId.price*100, --> it needs this
+            currency: 'usd', --> it needs this
+            quantity: p.quantity --> it needs this
+        };
+    }),
+    success_url: , --> stripe will redirect to these urls after either successfull or failed payment
+    cancel_url: 
+});
+
+stripe official docs will help more, but this section is helpful to get started with how to use the test keys and where to use them
+-------------------------------------------------------------------------------------------------------------------------------------
 
 
 
