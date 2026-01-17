@@ -5,17 +5,46 @@ const order = require('../models/order');
 const fs = require('fs');
 const path = require('path');
 const pdfkit = require('pdfkit');
+
+const ITEMS_PER_PAGE = 1;
+
 exports.getProducts = (req, res, next) => {
   console.log(req.session.isLoggedIn);
+  const page = +req.query.page || 1;
   // Product.findAll().
+  // Product.find()
+  //   .then(products => {
+  //     console.log(products);
+  //     res.render('shop/product-list', {
+  //       prods: products,
+  //       pageTitle: 'All Products',
+  //       path: '/products',
+  //       isAuthenticated: req.session.isLoggedIn
+  //     });
+  //   })
   Product.find()
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      console.log("totalItems : ", totalItems);
+      return Product.find().skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
+    })
     .then(products => {
       console.log(products);
       res.render('shop/product-list', {
         prods: products,
         pageTitle: 'All Products',
         path: '/products',
-        isAuthenticated: req.session.isLoggedIn
+        // totalProducts: totalItems,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPrevPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+        // isAuthenticated: req.session.isLoggedIn,
+        // csrfToken: csrfToken
       });
     }).catch(err => {
       console.log(err);
@@ -55,15 +84,31 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
   // Product.findAll()
   // const csrfToken = req.csrfToken();
   Product.find()
+    .countDocuments()
+    .then(numProducts => {
+      totalItems = numProducts;
+      console.log("totalItems : ", totalItems);
+      return Product.find().skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE)
+    })
     .then(products => {
       console.log(products);
       res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
         path: '/',
+        // totalProducts: totalItems,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPrevPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
         // isAuthenticated: req.session.isLoggedIn,
         // csrfToken: csrfToken
       });
