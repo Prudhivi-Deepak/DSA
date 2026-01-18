@@ -687,7 +687,7 @@ app.use(csrfProtection); --> add it to our app
 
 for any post request this pacakge will look for csrf token in the request body
 so to add it to the request 
-add it to the responseas follows
+add it to the responses follows
 key is as our wish, value is calling csrfToken() from req.csrfToken()
 
 csrfToken: req.csrfToken()
@@ -1180,8 +1180,108 @@ return stripe.checkout.sessions.create({ --> stripe needs these things to be con
 stripe official docs will help more, but this section is helpful to get started with how to use the test keys and where to use them
 -------------------------------------------------------------------------------------------------------------------------------------
 
+REST - Representational State Transfer
+Transfer Data instead of User Interfaces
+
+GET --> get a resource
+POST --> create or resource 
+PUT --> create or overrides exisiting resource
+PATCH --> Update the part of resource
+DELETE --> Delete a resource on server
+OPTIONS --> send automatically by browser 
+
+REST Principles
+
+--> uniform Interfaces
+    --> clear defiend endpoints, with clear defined requests + response Data structure
+--> stateless Interactions
+    --> server adn client doesn't store any connection history, every request is handled seperately
+--> cache responses
+    --> server sets caching headers allow clients to cache
+--> client - server relation 
+    --> don't care about persistent storage
+--> Layered system
+    --> servers may forward req to other server
+--> code on Demand
+    --> executable code may be transferred from server to client
+
+const app = express();
+// app.use(bodyParser.urlencoded()); //x-www-form-urlencoded <form> --> json format parser
+app.use(bodyParser.json()); //application/json --> json format parser
+app.use('/feed', feedRoutes);
+
+exports.getPosts = (req, res, next) => {
+    res.status(200).json({post: [{title: 'First Post', content: 'This is the first post!'}]});
+};
+
+exports.createPost = (req, res, next) => {
+    res.status(201).json({
+        message: 'Post created successfully!',
+        post: {id: new Date().toISOString(), title: req.body.title, content: req.body.content}
+    })
+};
+
+CORS --> Cross - Origin Resource Sharing --> got this origin error when try from the UI
+
+client - server running on the same origin like localhost:3000 (client & server)
+
+app.use((req, res, next)=>{
+    res.setHeader('Access-Control-Allow-Origin', '*'); --> allow any client to access the server response (*) instead we can set to specific Domain
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'); --> we also need to tell which methods to be used for origins
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization' ); --> allow the headers that our client might set on their request, we can mention * as well
+    next();
+})
+
+--> for post request we are not able to extract the title, content from body 
+because 
+-->the Content-Type is text/plain, it should be application/json
+--> also request payload is Object, but it should be json
+
+we have to use JSON.payload({ title: .., content: ...}) in the body of the form in the UI
+also set the headers, Content-Type to application/json in the UI
+
+when using fetch, when we click on post request
+2 post request --> 1st one it's Request Method : OPTIONS  --. send this request to check if this is Allowed, otherwise to thrown an error
+
+Example: Build a Complete RESTful API from Scratch: https://academind.com/learn/node-js/building-a-restful-api-with/
+------------------------------------------------------------------------------------------------------------------------------------------
 
 
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject"
+},
 
 
+const imageUrl = req.file.path.replace("\\" ,"/");
+instead of 
+return post.findByIdAndRemove();
+use
+return post.deleteOne();
+in mongoose
+
+
+server will send a token to the client after Auth in stateless 
+so in the subsequent API calls, the client will add this token to the request
+
+what's the token = Json Data + signature  = JSON Web token
+
+to generate this token we need jsonwebtoken
+
+npm install --save jsonwebtoken
+
+const token = jwt.sign({
+    email: loadedUser.email,
+    userId: loadedUser._id.toString()
+}, 'superLongStringSecret', {expiresIn: '1h'});
+---> create the jwt token with email, user and 2nd argument as secret, 3rd arguyment as expiresIn
+
+--> add token to the headers tot eh request from the client
+fetch('http://localhost:8080/feed/posts?page='+page, {
+    headers: {
+    Authorization: 'Bearer '+this.props.token
+    }
+}).then()..
 
