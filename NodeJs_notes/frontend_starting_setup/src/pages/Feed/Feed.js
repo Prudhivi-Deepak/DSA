@@ -9,6 +9,8 @@ import Loader from '../../components/Loader/Loader';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 import './Feed.css';
 
+import {io} from 'socket.io-client';
+
 class Feed extends Component {
   state = {
     isEditing: false,
@@ -37,7 +39,57 @@ class Feed extends Component {
       .catch(this.catchError);
 
     this.loadPosts();
+    // openSocket('http://localhost:8080')
+    const socket = io("http://localhost:8080");
+
+    socket.on("connect", () => {
+      console.log("Connected to server", socket.id);
+    });
+
+    socket.on('posts', (data)=>{
+      console.log(data);
+      if(data.action == 'create'){
+        this.appPost(data.post);
+      }
+      else if(data.action == 'update'){
+        this.update(data.post);
+      }
+      else if(data.action == 'delete'){
+        this.loadPosts();
+      }
+    });
+
+    
   }
+
+  appPost = (post) =>{
+    this.setState(prevState => {
+      const updatedPosts = [...prevState.posts];
+      if (prevState.postPage === 1) {
+        if (prevState.posts.length >= 2) {
+          updatedPosts.pop();
+        }
+        updatedPosts.unshift(post);
+      }
+      return {
+        posts: updatedPosts,
+        totalPosts: prevState.totalPosts + 1
+      };
+    })
+  };
+
+  updatePost = post => {
+    this.setState(prevState => {
+      const updatedPosts = [...prevState.posts];
+      const updatedPostIndex = updatedPosts.findIndex(p => p._id === post._id);
+      if (updatedPostIndex > -1) {
+        updatedPosts[updatedPostIndex] = post;
+      }
+      return {
+        posts: updatedPosts
+      };
+    });
+  };
 
   loadPosts = direction => {
 
@@ -55,24 +107,24 @@ class Feed extends Component {
       page--;
       this.setState({ postPage: page });
     }
-    
+
     // fetch(this.BACKEND_URL+'feed/posts')
-    fetch('http://localhost:8080/feed/posts?page='+page, {
+    fetch('http://localhost:8080/feed/posts?page=' + page, {
       headers: {
-        Authorization: 'Bearer '+this.props.token
+        Authorization: 'Bearer ' + this.props.token
       }
     })
       .then(res => {
         if (res.status !== 200) {
           throw new Error('Failed to fetch posts.');
         }
-        return res.json(); 
+        return res.json();
       })
       .then(resData => {
         this.setState({
-          posts: resData.posts.map(post=>{
+          posts: resData.posts.map(post => {
             return {
-              ...post, 
+              ...post,
               imagePath: post.imageUrl
             }
           }),
@@ -134,19 +186,19 @@ class Feed extends Component {
       url = 'http://localhost:8080/feed/post/' + this.state.editPost._id;
       method = 'PUT';
     }
-    console.log("method :",method);
+    console.log("method :", method);
     fetch(url, {
       method: method,
       // headers: {
       //   "Content-Type": 'application/json'
       // },
-      body: formData ,
+      body: formData,
       // JSON.stringify({
       //   title: postData.title,
       //   content: postData.content,
       // })
       headers: {
-        Authorization: 'Bearer '+this.props.token
+        Authorization: 'Bearer ' + this.props.token
       }
     })
       .then(res => {
@@ -164,17 +216,18 @@ class Feed extends Component {
           createdAt: resData.post.createdAt
         };
         this.setState(prevState => {
-          let updatedPosts = [...prevState.posts];
-          if (prevState.editPost) {
-            const postIndex = prevState.posts.findIndex(
-              p => p._id === prevState.editPost._id
-            );
-            updatedPosts[postIndex] = post;
-          } else if (prevState.posts.length < 2) {
-            updatedPosts = prevState.posts.concat(post);
-          }
+          // let updatedPosts = [...prevState.posts];
+          // if (prevState.editPost) {
+          //   const postIndex = prevState.posts.findIndex(
+          //     p => p._id === prevState.editPost._id
+          //   );
+          //   updatedPosts[postIndex] = post;
+          // } 
+          // else if (prevState.posts.length < 2) {
+          //   updatedPosts = prevState.posts.concat(post);
+          // }
           return {
-            posts: updatedPosts,
+            // posts: updatedPosts,
             isEditing: false,
             editPost: null,
             editLoading: false
@@ -198,10 +251,10 @@ class Feed extends Component {
 
   deletePostHandler = postId => {
     this.setState({ postsLoading: true });
-    fetch('http://localhost:8080/feed/post/'+postId, {
+    fetch('http://localhost:8080/feed/post/' + postId, {
       method: 'DELETE',
       headers: {
-        Authorization: 'Bearer '+this.props.token
+        Authorization: 'Bearer ' + this.props.token
       }
     })
       .then(res => {
@@ -212,10 +265,11 @@ class Feed extends Component {
       })
       .then(resData => {
         console.log(resData);
-        this.setState(prevState => {
-          const updatedPosts = prevState.posts.filter(p => p._id !== postId);
-          return { posts: updatedPosts, postsLoading: false };
-        });
+        this.loadPosts();
+        // this.setState(prevState => {
+        //   const updatedPosts = prevState.posts.filter(p => p._id !== postId);
+        //   return { posts: updatedPosts, postsLoading: false };
+        // });
       })
       .catch(err => {
         console.log(err);

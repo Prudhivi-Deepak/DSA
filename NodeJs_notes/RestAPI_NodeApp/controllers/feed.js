@@ -3,36 +3,64 @@ const Post = require('../models/post');
 const fs = require('fs');
 const path = require('path');
 const User = require('../models/user');
+const io = require('../socket');
 
-exports.getPosts = (req, res, next) => {
+exports.getPosts = async (req, res, next) => {
 
     const page = req.query.page || 1;
     const perPage = 1;
     let totalItems;
-    Post.find().countDocuments()
-        .then(count => {
-            totalItems = count;
-            return Post.find().skip((page - 1) * perPage).limit(perPage);
-        })
-        .then(posts => {
-            if (!posts) {
-                const newError = new Error("validation failed");
-                newError.statusCode = 404;
-                throw newError;
-            }
-            console.log("totalItems : ", totalItems);
-            res.status(200).json({
-                message: "Post fetched",
-                posts: posts,
-                totalItems: totalItems
-            });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-        })
+
+    const count = await Post.find().populate('creator').countDocuments()
+        // .then(count => {
+    totalItems = count;
+    const posts =  await Post.find().sort({createdAt: -1}).skip((page - 1) * perPage).limit(perPage);
+        // })
+        // .then(posts => {
+    if (!posts) {
+        const newError = new Error("validation failed");
+        newError.statusCode = 404;
+        throw newError;
+    }
+    console.log("totalItems : ", totalItems);
+    
+    res.status(200).json({
+        message: "Post fetched",
+        posts: posts,
+        totalItems: totalItems
+    });
+        // })
+        // .catch(err => {
+        //     if (!err.statusCode) {
+        //         err.statusCode = 500;
+        //     }
+        //     next(err);
+        // })
+
+    // Post.find().countDocuments()
+    //     .then(count => {
+    //         totalItems = count;
+    //         return Post.find().skip((page - 1) * perPage).limit(perPage);
+    //     })
+    //     .then(posts => {
+    //         if (!posts) {
+    //             const newError = new Error("validation failed");
+    //             newError.statusCode = 404;
+    //             throw newError;
+    //         }
+    //         console.log("totalItems : ", totalItems);
+    //         res.status(200).json({
+    //             message: "Post fetched",
+    //             posts: posts,
+    //             totalItems: totalItems
+    //         });
+    //     })
+    //     .catch(err => {
+    //         if (!err.statusCode) {
+    //             err.statusCode = 500;
+    //         }
+    //         next(err);
+    //     })
 
     // res.status(200).json({
     //     posts: [{
@@ -85,6 +113,8 @@ exports.createPost = (req, res, next) => {
     })
     .then(result => {
         console.log("result : ", result);
+        io.getIo().emit('posts', { action: 'create' , post : {...post._doc, creator: { _id: req.userId, name: result.name}} })
+
         res.status(201).json({
             message: 'Post created successfully!',
             post: post,
@@ -133,14 +163,14 @@ exports.updatePost = (req, res, next) => {
     const content = req.body.content;
     const imageUrl = req.file.path.replace("\\", "/");
 
-    Post.findById(postId).then(post => {
+    Post.findById(postId).populate('creator').then(post => {
         if (!post) {
             const newError = new Error("validation failed");
             newError.statusCode = 404;
             throw newError;
         }
 
-        if(post.creator.toString() === req.userId ){
+        if(post.creator._id.toString() === req.userId ){
             const error = new Error("Not Authorized");
             error.statusCode =  403;
             throw error;
@@ -158,6 +188,7 @@ exports.updatePost = (req, res, next) => {
 
     })
         .then(result => {
+            io.getIo().emit('posts', { action: 'update' , post : result })
             res.status(200).json({ message: 'post Updated', post: result });
         })
         .catch(err => {
@@ -216,6 +247,7 @@ exports.deletePost = (req, res, next) => {
             return user.save();
         })
         .then(result=>{
+            io.getIo().emit('posts', { action: 'delete' , post : postId  });
             res.status(200).json({ message: 'post Deleted' });
         })
         .catch(err => {
