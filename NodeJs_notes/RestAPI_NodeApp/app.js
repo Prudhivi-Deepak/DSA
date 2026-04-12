@@ -7,6 +7,10 @@ const path = require('path');
 const { error } = require('console');
 const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
+const { graphqlHTTP } = require('express-graphql');
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolvers = require('./graphql/resolvers');
+const auth = require('./middleware/auth');
 
 const app = express();
 // app.use(bodyParser.urlencoded()); //x-www-form-urlencoded <form> --> json format parser
@@ -36,17 +40,38 @@ const fileFilter = (req, file, cb) => {
 
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 
-const MONGODB_URI = "mongodb://localhost:27017/RestAPI";
+const MONGODB_URI = "mongodb://localhost:27017/GraphQL";
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); //--> allow any client to access the server response (*) instead we can set to specific Domain
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'); //--> we also need to tell which methods to be used for origins
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); //--> allow the headers that our client might set on their request, we can mention * as well
+    if(req.method == 'OPTIONS'){
+        return res.sendStatus(200);
+    }
     next();
 });
 
-app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+app.use(auth);
+
+// app.use('/feed', feedRoutes);
+// app.use('/auth', authRoutes);
+
+app.use('/graphql', graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolvers,
+    graphiql: true,
+    // formatError
+    customFormatErrorFn(err){
+        if(!err.originalError){
+            return err;
+        }
+        const data = err.originalError.data;
+        const message  = err.message || 'An error Occurred';
+        const code = err.originalError.code || 500;
+        return {message: message, status: code, data: data }
+    }
+}));
 
 app.use((error, req, res, next) => {
     console.log(error);
@@ -57,27 +82,7 @@ app.use((error, req, res, next) => {
 })
 
 mongoose.connect(MONGODB_URI).then(result => {
-    // const user = new User({
-    //     name: 'Will',
-    //     email: 'st@will.com',
-    //     cart: {
-    //         items:[]
-    //     }
-    // })
-    // user.save();
-    // app.listen(8080);
-    const server = app.listen(8080) //--> this returns the node server app
-    // const io = require('socket.io')(server, {
-    const io = require('./socket').init(server, {
-        cors: {
-            origin: "http://localhost:3000",
-            methods: ["GET", "POST"]
-        }
-    }) //--> pass server as arugment as websockets us build on http
-
-    io.on('connection', socket => {
-        console.log("client connected", socket.id);
-    });
+    app.listen(8080);
 });
 
 // app.listen(8080);

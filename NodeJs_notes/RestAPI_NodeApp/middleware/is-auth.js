@@ -3,9 +3,11 @@ const jwt = require('jsonwebtoken');
 module.exports = (req, res, next)=>{
     const authHeader =  req.get('Authorization');
     if(!authHeader){
-        const error = new Error("no Authorization key");
-        error.statusCode = 401;
-        throw error;
+        // const error = new Error("no Authorization key");
+        // error.statusCode = 401;
+        // throw error;
+        req.isAuth = false;
+        return next
     }
 
 

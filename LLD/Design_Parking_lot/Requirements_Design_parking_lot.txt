@@ -1,11 +1,129 @@
-Entities
-    1. ParkingArea/slot
-    2. EntryTicket
-    3. ExitPayment
+first what is the FLow, what we do actually?
 
-Flow
-    1. Entry Flow
-    2. Exit Flow
+Step 1
+
+Functional Requirements
+-------------------------------------------------------------------------------------
+parking lot
+Entry Flow
+    - we go to the entry gate and generate the ticket fo the slot 
+    - park our vechicle at the slot
+    - mark teh slot as occupied
+    - Return Entry result as SUCCESS/FAILURE status
+Exit Flow
+    - we checkout the slot --> at the exit gate provide the ticket and mark as empty after payment
+    - Now the admin will calculate the fee and provide it
+    - pay the fee (processing the payment) -> generate Payment Result SUCCESS/FAILURE
+    - SUCCESS -> Return the ExitResult as SUCCESS
+    - FAILURE -> Return the ExitResult as FAILURE
+
+Admin configuration
+    - manage the building floors and slots in the software
+    - Define the pricing rules (flat + hourly charges) based on vechicle type
+    - view current parking status
+
+# In any case of server failure Human intervention is needed
+
+Non-Functional Requirements
+----------------------------------------------------------------
+scalability : Must support multipple floors and slots with 1000's of slots'
+consistency : Strong consistency for slot allocation and release
+Availability : High availablilty for Entry/Exit Gates even during payment failure
+Latency : low latency( <500 ms) for ticket generation and exit processing
+Extensibility : easily add new vechicle types ? pricing strategies or gateways
+security : Role-based access for admin actions
+
+Edge Cases
+----------------------------------------------------------------------------------
+payment failure during exit - retry and hold slot
+ticket lost - allow admin to check manually
+clock skew - system time validation
+slot state mismatch - peridic reconciliation
+---------------------------------------------------------------------------------
+
+Step 2
+
+Identify the core entities
+
+1. vehicle 
+    - id[pk], 
+    - licensePlate [string], 
+    - vechicleType [enum] (bike, car, truck, ev)
+2. ticket 
+    - id [pk], 
+    - vehicleId[fk], 
+    - slotId [fk], 
+    - entryTime [TimeStamp], 
+    - isValid [boolen]
+3. parkingFloor 
+    - id [pk], 
+    - floorNumber [int], 
+    - slots [List<parkingSlot>]
+4. parkingSlot 
+    - id [pk], 
+    - slotType [enum] (BIKE, CAR, TRUCK, EV), 
+    - isOccupied [boolean], 
+    - floorNumber [int]
+5. payment 
+    - id [pk],  
+    - ticketId [fk], 
+    - amount [Double], 
+    - gateway [enum] (RAZORPAY, STRIPE), 
+    - status [enum] (PENDING, SUCCESS, FAILURE)
+6. Receipt 
+    - id [pk], 
+    - paymentId [fk], 
+    - ticketId [fk], 
+    - exitTime [TIMESTAMP], 
+    - amountPaid [Double], 
+    - paymentStatus [enum] (PENDING, SUCCESS, FAILURE)
+7. pricingRule 
+    - id [pk], 
+    - vehicleType [enum] (BIKE, CAR, TRUCK, EV), 
+    - ratePerHour [Double], 
+    - flatRate [Double], 
+    - ruleType [enum] (FlAT, HOURLY)
+--------------------------------------------------------------------------------
+
+DTO's'
+
+8. EntryResult 
+    - iSsuceess [boolen]
+    - ticket [Ticket] (isSuccess == true)
+    - message [string]
+
+9. ExitResult
+    - isSuccess [boolen]
+    - receipt [receipt] (isSuccess == true)
+    - mesaage [string] 
+----------------------------------------------------------------------------------
+step 3
+coding:
+1. create all entities/classes in domain folder
+2. Discuss the Entry and Exit Flow
+    Entry flow:
+        Driver enters and gets ticket with slotId
+    Exit Flow
+        Driver shows the ticket then price computed
+        pay the fee (retry if fails) and get the receipt
+        ticket deactivated to checkout
+    Admin Flow
+        Admin requests to add floors, slots or update pricing rule
+
+-----------------------------------------------------------------------------------------
+step 4
+ARCHITECTURE LAYER
+Client/UI --> Controller layer (HTTP/API) --> service Layer --> Repository Layer --> Domain Layer
+
+CONTROLLERS
+1. EntryControler
+
+2. ExitController
+
+3. AdminController
+    
+
+
 
 
 

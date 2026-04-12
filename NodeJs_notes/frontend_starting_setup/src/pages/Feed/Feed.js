@@ -9,7 +9,7 @@ import Loader from '../../components/Loader/Loader';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 import './Feed.css';
 
-import {io} from 'socket.io-client';
+// import {io} from 'socket.io-client';
 
 class Feed extends Component {
   state = {
@@ -40,24 +40,24 @@ class Feed extends Component {
 
     this.loadPosts();
     // openSocket('http://localhost:8080')
-    const socket = io("http://localhost:8080");
+    // const socket = io("http://localhost:8080");
 
-    socket.on("connect", () => {
-      console.log("Connected to server", socket.id);
-    });
+    // socket.on("connect", () => {
+    //   console.log("Connected to server", socket.id);
+    // });
 
-    socket.on('posts', (data)=>{
-      console.log(data);
-      if(data.action == 'create'){
-        this.appPost(data.post);
-      }
-      else if(data.action == 'update'){
-        this.update(data.post);
-      }
-      else if(data.action == 'delete'){
-        this.loadPosts();
-      }
-    });
+    // socket.on('posts', (data)=>{
+    //   console.log(data);
+    //   if(data.action == 'create'){
+    //     this.appPost(data.post);
+    //   }
+    //   else if(data.action == 'update'){
+    //     this.update(data.post);
+    //   }
+    //   else if(data.action == 'delete'){
+    //     this.loadPosts();
+    //   }
+    // });
 
     
   }
@@ -108,11 +108,37 @@ class Feed extends Component {
       this.setState({ postPage: page });
     }
 
+    const graphqlQuery = {
+      query: `
+        {
+          posts(page: ${page}) {
+            posts {
+              _id
+              title
+              content
+              imageUrl
+              creator {
+                name
+              }
+              createdAt
+            }
+            totalPosts
+          }
+        }
+      `
+    };
+
     // fetch(this.BACKEND_URL+'feed/posts')
-    fetch('http://localhost:8080/feed/posts?page=' + page, {
+    // fetch('http://localhost:8080/feed/posts?page=' + page, {
+    fetch('http://localhost:8080/graphql' 
+      // + page
+      , {
+      method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + this.props.token
-      }
+        Authorization: 'Bearer ' + this.props.token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(graphqlQuery)
     })
       .then(res => {
         if (res.status !== 200) {
@@ -121,14 +147,17 @@ class Feed extends Component {
         return res.json();
       })
       .then(resData => {
+        if(resData.errors){
+          throw new Error("User login failed post error");
+        }
         this.setState({
-          posts: resData.posts.map(post => {
+          posts: resData.data.posts.posts.map(post => {
             return {
               ...post,
               imagePath: post.imageUrl
             }
           }),
-          totalPosts: resData.totalItems,
+          totalPosts: resData.data.posts.totalPosts,
           postsLoading: false
         });
       })
@@ -181,58 +210,117 @@ class Feed extends Component {
 
     let method = 'POST';
     // Set up data (with image!)
-    let url = 'http://localhost:8080/feed/posts';
-    if (this.state.editPost) {
-      url = 'http://localhost:8080/feed/post/' + this.state.editPost._id;
-      method = 'PUT';
+    // let url = 'http://localhost:8080/feed/posts';
+    // if (this.state.editPost) {
+    //   url = 'http://localhost:8080/feed/post/' + this.state.editPost._id;
+    //   method = 'PUT';
+    // }
+    let url = 'http://localhost:8080/graphql'
+
+    let graphqlQuery = {
+      query: `
+        mutation {
+          createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "dummy image url"}){
+            _id
+            title
+            content
+            imageUrl
+            creator {
+              name
+            }
+            createdAt
+          }
+        }
+      `
     }
+
     console.log("method :", method);
     fetch(url, {
       method: method,
       // headers: {
       //   "Content-Type": 'application/json'
       // },
-      body: formData,
+      // body: formData,
+      body: JSON.stringify(graphqlQuery),
       // JSON.stringify({
       //   title: postData.title,
       //   content: postData.content,
       // })
       headers: {
-        Authorization: 'Bearer ' + this.props.token
+        Authorization: 'Bearer ' + this.props.token,
+        'Content-Type': 'application/json'
       }
     })
       .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Creating or editing a post failed!');
-        }
+        // if (res.status !== 200 && res.status !== 201) {
+        //   throw new Error('Creating or editing a post failed!');
+        // }
         return res.json();
       })
       .then(resData => {
+        if(resData.errors && resData.errors[0].status == 422){
+          throw new Error(
+            "Validation failed. Make sure the email address isn't used yet!"
+          );
+        }
+        if(resData.errors){
+          throw new Error(
+            "User login Failed"
+          );
+        }
+        console.log(resData);
+        // const post = {
+        //   _id: resData.post._id,
+        //   title: resData.post.title,
+        //   content: resData.post.content,
+        //   creator: resData.post.creator,
+        //   createdAt: resData.post.createdAt
+        // };
         const post = {
-          _id: resData.post._id,
-          title: resData.post.title,
-          content: resData.post.content,
-          creator: resData.post.creator,
-          createdAt: resData.post.createdAt
+          _id: resData.data.createPost._id,
+          title: resData.data.createPost.title,
+          content: resData.data.createPost.content,
+          creator: resData.data.createPost.creator,
+          createdAt: resData.data.createPost.createdAt
         };
+
         this.setState(prevState => {
-          // let updatedPosts = [...prevState.posts];
-          // if (prevState.editPost) {
-          //   const postIndex = prevState.posts.findIndex(
-          //     p => p._id === prevState.editPost._id
-          //   );
-          //   updatedPosts[postIndex] = post;
-          // } 
-          // else if (prevState.posts.length < 2) {
-          //   updatedPosts = prevState.posts.concat(post);
-          // }
+          let updatedPosts = [...prevState.posts];
+          if (prevState.editPost) {
+            const postIndex = prevState.posts.findIndex(
+              p => p._id === prevState.editPost._id
+            );
+            updatedPosts[postIndex] = post;
+          } else {
+            updatedPosts.pop();
+            updatedPosts.unshift(post);
+          }
           return {
-            // posts: updatedPosts,
+            posts: updatedPosts,
             isEditing: false,
             editPost: null,
             editLoading: false
           };
         });
+
+        // this.setState(prevState => {
+        //   // let updatedPosts = [...prevState.posts];
+        //   // if (prevState.editPost) {
+        //   //   const postIndex = prevState.posts.findIndex(
+        //   //     p => p._id === prevState.editPost._id
+        //   //   );
+        //   //   updatedPosts[postIndex] = post;
+        //   // } 
+        //   // else if (prevState.posts.length < 2) {
+        //   //   updatedPosts = prevState.posts.concat(post);
+        //   // }
+        //   return {
+        //     // posts: updatedPosts,
+        //     isEditing: false,
+        //     editPost: null,
+        //     editLoading: false
+        //   };
+        // });
       })
       .catch(err => {
         console.log(err);

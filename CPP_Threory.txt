@@ -856,6 +856,41 @@ definition:
         }
 
 -----------------------------------------------------------------------
+bitset<8> bt;
+You can perform various operations on bitset objects. 
+Function/Operator 	Description	Example
+[pos]	Accesses the bit at a specific position pos (0-indexed from the right).	if (b2[1]) { ... }
+any()	Returns true if any bit is set to 1.	if (b1.any()) { ... }
+none()	Returns true if none of the bits are set (all are 0).	if (b1.none()) { ... }
+all()	Returns true if all bits are set to 1.	if (b3.all()) { ... }
+count()	Returns the number of bits that are set to 1.	int ones = b3.count();
+size()	Returns the total number of bits in the bitset.	size_t len = b3.size();
+set()	Sets all bits to 1, or a specific bit at an index to a given value.	b1.set(); b2.set(0, true);
+reset()	Resets all bits to 0, or a specific bit at an index to 0.	b1.reset(); b2.reset(1);
+flip()	Flips all bits (changes 1s to 0s and 0s to 1s).	b3.flip();
+to_string()	Converts the bitset to a std::string.	std::string s = b3.to_string();
+&, |, ^, ~	Performs bitwise AND, OR, XOR, and NOT operations.	b1 = b2 & b3;
+<<, >>	Performs left and right bit shifts.	b2 << 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 sort method:
 

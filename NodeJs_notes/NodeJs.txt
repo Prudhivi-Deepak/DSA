@@ -1384,4 +1384,167 @@ Socket.io Official Docs: https://socket.io/get-started/chat/
 Alternative Websocket Library: https://www.npmjs.com/package/express-ws
 --------------------------------------------------------------------------------
 
+Graph QL 
 
+REST API - stateless client independent API for exchange data
+                + with higher query flexibility  = Graph QL
+
+i need some data only like title & content in one place 
+and only need creator of the post info at one place
+
+simple solution is to create different API's as required, 
+else we end up sending unnecessary info to the frontend and parse it to display it
+
+Another solution is to use Graph QL, data parsed on the backend and return the required data
+In Graph QL --> we only send one type of request POST/graphql
+--> we add the request body to define the data that needs to be returned
+{
+    query { --> operation type --> we use POST request 
+        user { --> operation endpoint
+            name --> requested fields
+            age  --> requested fields
+        }
+    }
+}
+Query / Mutation (GET, POST, PUT, PATCH, DELETE) / Subscription
+we set all the 3 definitions (in these definitions we use type definitions like the type of data we return in the query)
+All these 3 definitions are connected to resolvers (which has the server side logic)
+
+if we compare it with REST API 
+all 3 definitions  -------- routes
+resolvers          -------- controllers
+
+npm install --save graphql --> required for defining the schema for graphql Service
+npm install --save express-graphql --> to install a simple server that do the parsing for the incoming request
+
+
+const { buildSchema } = require('graphql'); --> used to define schema used by express-graphql
+
+module.exports = buildSchema(`
+    schema {
+        query:  --> will be an object with all the queries & quereis are the part where we get data
+    } 
+`);
+
+
+module.exports = buildSchema(`
+    type RootQuery {
+        hello: String! --> query name and then return type --> we added ! to make it required
+    }
+    schema {
+        query: RootQuery
+    } 
+`);
+
+--> define what is that String or text in the resolvers
+module.exports = {
+    hello(){ --> create a function in the resolvers --> with a matched query name offcourse
+        return "heelow world;
+    }
+}
+
+--> in app.js import graphql, schema, resolvers
+--> app.use(route, graphqlHTTP Object with schema and resolvers )
+
+const { graphqlHTTP } = require('express-graphql');
+app.use('/graphql', graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolvers,
+    graphiql: true, --> we get a screen when we go to /graphql in browser 
+
+}));
+
+
+{
+    query : --> express graphql look for this in the incoming request
+}
+
+{
+    "query": "{ hello { text } }" --> getting text from hello query but not the views
+}
+
+Now we have seen how to get data, let's work on how to save data
+module.exports = buildSchema(`
+    type posts {
+        _id: ID
+        title: String!
+        content: String!
+        imageUrl: String!
+        creator: User! --> creator is a User defined below
+        createdAt: String! --> graphql doesnt know dates, so using String
+        updatedAt: String!
+    }
+    type User {
+        _id: ID --> special ID type by graphql, which says it's unique
+        email: String!
+        name: String!
+        password: String
+        status: String!
+        posts: [Post!]! --> Array of Post defined above
+    }
+    input UserInputData { --> to define a type of input being send to the resolver function 
+                            -->we can use input keyword instead of type
+        email: String!
+        name: String!
+        password: String!
+
+    }
+    type RootMutation {
+        createUser(userInput: UserInputData): User! --> we can also send parameters to the query and to the resolvers function
+        --> we also mentioned the return type for the resolver which is User type in this case
+    }
+    schema {
+        mutation: RootMutation
+    } 
+`);
+
+
+--> defining resolver for the above mutation
+createUser(args, req){
+    --> from args --> we can retreive all data that we defined in the schema
+    const  email = args.userInput.email;
+}
+
+--> Or we can simply destructure the args to get userInput (input parameter defined in the schema)
+createUser({ userInput }, req){
+    const email = userInput.email;
+}
+
+--> To use Aync await we need to change the syntax little bit like
+createUser: async function({ userInput }, req){
+    const email = userInput.email;
+}
+
+mutation {
+  createUser(userInput: {email: "wil@gmail.com", name: "will", password: "will"}){
+    _id
+    email
+  }
+}
+
+npm install --save validators --> for adding validation in resolvers
+
+if(!validator.isEmail(userInput.email)){ --> import validator and use it in resolvers functions
+    --> push error messages to array and check outside if length of the errors list is not 0 thrown an real error object
+}
+--> what if i want to customize my error format 
+we can include a configuration in the app.js
+
+app.use('/graphql', graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolvers,
+    graphiql: true,
+    formatError(err){ --> to format the error as we need
+    customFormatErrorFn(err){ --> as formatError is deprecated
+        if(!err.originalError){
+            return err;
+        }
+        const data = err.originalError.data;
+        const message  = err.message || 'An error Occurred';
+        const code = err.originalError.code || 500;
+        return {message: message, status: code, data: data }
+    }
+}));
+
+--> graphql only accepts POST or GET request and rejects all other requests
+--> so for OPTIONS --> we can check teh method and return the response using a middleware
